@@ -1,3 +1,9 @@
+"""Assumes that there is a csv (probably generated from a Google Form) that has
+fields like "name", "email" and a list of "domains" in which each submittee is
+comfortable reviewing.
+
+"""
+
 import pandas
 
 class Reviewer(object):
@@ -24,6 +30,7 @@ def get_reviewer_info(csvfile=None, columns=None, rename_dict=None, dup_drop=Non
     responses.domain.str.split(', ')
     return responses.drop_duplicates(subset=dup_drop)
 
+
 def get_domain_order(domains):
     """Return list of all domains of all reviewers"""
     count = []
@@ -32,6 +39,17 @@ def get_domain_order(domains):
             count.append(i)
     count = pandas.Series(count).value_counts()
     return count
+
+
+def fix_domain(responses, replacements):
+    """Rename domains that have commas in the name of the domain
+
+    replacements is dictionary where key-val == orig_val: new_val
+    """
+    for key, val in replacements.items():
+        for i, rep in enumerate(responses.domain):
+            responses.domain[i] = rep.replace(key, val)
+
 
 def populate_reviewers(responses):
     """Take a pandas dataframe and return a list of Reviewers created
@@ -56,15 +74,20 @@ def get_reviewer_pools(count, reviewers):
     return reviewer_pools
 
 kwargs = {'csvfile': 'responses.csv',
-        'columns': ['Name:',
-                    'Email',
-                    'Domain you volunteer to review (check all that apply)'],
-        'rename_dict': {'Name:': 'name',
-                        'Email': 'email',
-                        'Domain you volunteer to review (check all that apply)': 'domain'},
+          'columns': ['Name:',
+                      'Email',
+                      'Domain you volunteer to review (check all that apply)'],
+          'rename_dict': {'Name:': 'name',
+                          'Email': 'email',
+                          'Domain you volunteer to review (check all that apply)': 'domain'},
           'dup_drop': 'email'}
 
+replacements = {'Earth, Ocean or Geo Science': 'earth',
+                'Biology, Biophysics and Biostatistics': 'bio'}
+
 responses = get_reviewer_info(**kwargs)
+# Fix for domains with commas in them
+fix_domain(responses, replacements)
 count = get_domain_order(responses.domain)
 rev = populate_reviewers(responses)
 reviewer_pools = get_reviewer_pools(count, rev)
