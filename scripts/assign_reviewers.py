@@ -41,16 +41,6 @@ def get_domain_order(domains):
     return count
 
 
-def fix_domain(responses, replacements):
-    """Rename domains that have commas in the name of the domain
-
-    replacements is dictionary where key-val == orig_val: new_val
-    """
-    for key, val in replacements.items():
-        for i, rep in enumerate(responses.domain):
-            responses.domain[i] = rep.replace(key, val)
-
-
 def populate_reviewers(responses):
     """Take a pandas dataframe and return a list of Reviewers created
     from that dataframe.
@@ -82,12 +72,9 @@ kwargs = {'csvfile': 'responses.csv',
                           'Domain you volunteer to review (check all that apply)': 'domain'},
           'dup_drop': 'email'}
 
-replacements = {'Earth, Ocean or Geo Science': 'earth',
-                'Biology, Biophysics and Biostatistics': 'bio'}
 
 responses = get_reviewer_info(**kwargs)
 # Fix for domains with commas in them
-fix_domain(responses, replacements)
 count = get_domain_order(responses.domain)
 rev = populate_reviewers(responses)
 reviewer_pools = get_reviewer_pools(count, rev)
