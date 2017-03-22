@@ -48,18 +48,33 @@ def populate_reviewers(responses):
     Dataframe has columns "name", "email", "domain" where "domain" is a
     comma-separated list
     """
-    reviewers = []
+    reviewers = dict()
     for rev in responses.itertuples():
-        reviewers.append(Reviewer(rev.name,
+        reviewers[rev.email] =  (Reviewer(rev.name,
                                   rev.email,
                                   rev.domain.split(', ')))
 
     return reviewers
 
+def domain_count_sort(item):
+    """Return number of domains reviewer has.
+
+    Use to sort reviewers in pools by number of other domains checked
+    """
+    return len(item.domains)
+
 def get_reviewer_pools(count, reviewers):
+    """Generate pools of reviewers for each topic
+
+    Members of pool are sorted by number of domains they review in from least
+    to most
+    """
     reviewer_pools = {}
     for category in count.keys():
-        reviewer_pools[category] = [per for per in reviewers if category in per.domains]
+        reviewer_pools[category] = [per for per in reviewers.values()
+                                    if category in per.domains]
+        reviewer_pools[category] = sorted(reviewer_pools[category],
+                                          key=domain_count_sort)
 
     return reviewer_pools
 
