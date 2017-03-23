@@ -1,3 +1,4 @@
+import sys
 import subprocess
 
 def fix_domain(fname, replacements):
@@ -33,5 +34,14 @@ submission_replacements = {
     }
 
 if __name__ == "__main__":
-    fix_domain('reviewers.csv', reviewer_replacements)
-    fix_domain('submissions.csv', submission_replacements)
+    if len(sys.argv) < 2:
+        print("""Usage:
+        python clean_csv.py csv_file ['reviewer' | 'submission']""")
+        sys.exit()
+    csv_file = sys.argv[1]
+    if sys.argv[2] == 'reviewer':
+        fix_domain(csv_file, reviewer_replacements)
+    elif sys.argv[2] == 'submission':
+        fix_domain(csv_file, submission_replacements)
+    else:
+        sys.exit('Ummm what?')
