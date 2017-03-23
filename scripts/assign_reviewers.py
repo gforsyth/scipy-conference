@@ -4,7 +4,10 @@ comfortable reviewing.
 
 """
 
+import re
 import pandas
+
+EMAIL_REGEX = re.compile(r'[\w\.-]+@[\w\.-]+')
 
 class Reviewer(object):
     def __init__(self, name, email, domains):
@@ -17,6 +20,17 @@ class Reviewer(object):
 
     def __str_(self):
         return f"{self.name}"
+
+def extract_email(text_item):
+    """Extract email address(es) from given text item
+
+    Will return a list of matches
+
+    Expected form (not that it should matter) is:
+    "Applicant 1: gil@whataterribletextfield.com"
+    """
+
+    return re.findall(EMAIL_REGEX, text_item)
 
 def get_reviewer_info(csvfile=None, columns=None, rename_dict=None, dup_drop=None):
     """Read csv file selecting given columns and optionally renaming them as
