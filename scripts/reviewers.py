@@ -91,19 +91,3 @@ def get_reviewer_pools(count, reviewers):
                                           key=domain_count_sort)
 
     return reviewer_pools
-
-kwargs = {'csvfile': 'responses.csv',
-          'columns': ['Name:',
-                      'Email',
-                      'Domain you volunteer to review (check all that apply)'],
-          'rename_dict': {'Name:': 'name',
-                          'Email': 'email',
-                          'Domain you volunteer to review (check all that apply)': 'domain'},
-          'dup_drop': 'email'}
-
-
-responses = get_reviewer_info(**kwargs)
-# Fix for domains with commas in them
-count = get_domain_order(responses.domain)
-rev = populate_reviewers(responses)
-reviewer_pools = get_reviewer_pools(count, rev)
