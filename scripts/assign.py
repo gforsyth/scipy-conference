@@ -54,7 +54,7 @@ submission_pools = get_submission_pools(sub_count, sublist)
 
 # start assigning to areas with fewest number of reviewers first
 for domain in domain_count.keys()[::-1]:
-    reviewers = iter(reviewer_pools[domain])
+    reviewers = itertools.cycle(reviewer_pools[domain])
     # run each submission 3 times
     submissions = iter(submission_pools.get(domain, '') * 3)
 
@@ -62,11 +62,8 @@ for domain in domain_count.keys()[::-1]:
     for sub in submissions:
         # If we run out of reviewers reload the list and pop the submission to
         # the back of the queue
-        try:
-            reviewer = next(reviewers)
-        except StopIteration:
-            reviewers = iter(reviewer_pools[domain])
-            submissions = itertools.chain(submissions, (sub))
+        reviewer = next(reviewers)
+
         if not hasattr(reviewer, 'to_review'):
             reviewer.to_review = []
         if not hasattr(sub, 'reviewers'):
