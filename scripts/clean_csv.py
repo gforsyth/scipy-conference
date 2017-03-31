@@ -34,7 +34,8 @@ submission_replacements = {
     }
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    print(sys.argv)
+    if len(sys.argv) < 3:
         print("""Usage:
         python clean_csv.py csv_file ['reviewer' | 'submission']""")
         sys.exit()
