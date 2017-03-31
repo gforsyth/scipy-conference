@@ -5,11 +5,12 @@ APP_REGEX = re.compile(r'Applicant \d: (\w*)')
 EMAIL_REGEX = re.compile(r'[\w\.-]+@[\w\.-]+')
 
 class Submission(object):
-    def __init__(self, authors, emails, title, domain):
+    def __init__(self, authors, emails, title, domain, subid):
         self.authors = authors
         self.emails = emails
         self.title = title
         self.domain = domain
+        self.subid = subid
 
     def __repr__(self):
         return f"{self.title}, {self.domain}"
@@ -39,12 +40,12 @@ def get_submission_pools(count, sublist):
 def populate_submissions(subs):
     sublist = []
     for sub in subs.itertuples():
-        _, title, domain, emails, first_names, last_names = sub
+        _, subid, title, domain, emails, first_names, last_names = sub
         names = list(zip(re.findall(APP_REGEX, first_names),
                          re.findall(APP_REGEX, last_names)))
         names = [' '.join(name) for name in names]
         emails = re.findall(EMAIL_REGEX, emails)
-        sublist.append(Submission(names, emails, title, domain))
+        sublist.append(Submission(names, emails, title, domain, subid))
 
     return sublist
 
