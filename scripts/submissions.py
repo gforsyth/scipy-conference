@@ -18,12 +18,25 @@ class Submission(object):
         return f"{self.title}"
 
 def get_submissions(csvfile=None, columns=None):
+    """Read in the columns from the etouches csv with the info needed
+    Likely: Name, email, title, domain
+    """
     subs = pandas.read_csv(csvfile, usecols=columns)
-    return subs
+    count = subs['Submission-Initial Stage-Submission Subgroup'].value_counts()
 
+    return subs, count
 
-def populate_submissions(subs_kwargs):
-    subs = get_submissions(**subs_kwargs)
+def get_submission_pools(count, sublist):
+    """Generate pools of submissions for each topic
+
+    """
+    submission_pools = {}
+    for category in count.keys():
+        submission_pools[category] = [resub for resub in sublist if resub.domain == category]
+
+    return submission_pools
+
+def populate_submissions(subs):
     sublist = []
     for sub in subs.itertuples():
         _, title, domain, emails, first_names, last_names = sub
@@ -38,11 +51,3 @@ def populate_submissions(subs_kwargs):
 
 
 
-subs_kwargs = {'csvfile': 'submissions.csv',
-               'columns': ['Applicant-First Name',
-                           'Applicant-Last Name',
-                           'Applicant-E-mail Address',
-                           'Submission-Initial Stage-Title',
-                           'Submission-Initial Stage-Submission Subgroup',
-                            ]
-              }
