@@ -49,6 +49,7 @@ subs_kwargs = {'csvfile': 'submissions.csv',
                            'Applicant-E-mail Address',
                            'Submission-Initial Stage-Title',
                            'Submission-Initial Stage-Submission Subgroup',
+                           'Submission ID',
                             ]
               }
 
@@ -82,3 +83,4 @@ for domain in domain_count.keys()[::-1]:
 
 
 assert all([len(sub.reviewers) == 3 for sub in sublist])
+assert all([len(rev.to_review) < 5 for rev in rev_list])
