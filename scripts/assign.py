@@ -11,6 +11,11 @@ def assign_paper(reviewer, submission, assign_count):
     - Reviewer is not already reviewing this paper
     - That reviewer isn't already assigned papers > assign_count
     """
+    if not hasattr(reviewer, 'to_review'):
+        reviewer.to_review = []
+    if not hasattr(sub, 'reviewers'):
+        sub.reviewers = []
+
     if reviewer.email in submission.emails:
         return False
     elif submission in reviewer.to_review:
@@ -64,15 +69,14 @@ for domain in domain_count.keys()[::-1]:
         # the back of the queue
         reviewer = next(reviewers)
 
-        if not hasattr(reviewer, 'to_review'):
-            reviewer.to_review = []
-        if not hasattr(sub, 'reviewers'):
-            sub.reviewers = []
-        if not assign_paper(reviewer, sub, assign_count):
-            submissions = itertools.chain(submissions, (sub))
+        while not assign_paper(reviewer, sub, assign_count):
+            reviewer = next(reviewers)
 
-        assign_count = max([len(rev.to_review) for rev in
+            min_count = min([len(rev.to_review) for rev in
                             reviewer_pools[domain] if hasattr(rev, 'to_review')])
+            max_count = max([len(rev.to_review) for rev in
+                            reviewer_pools[domain] if hasattr(rev, 'to_review')])
+            assign_count = min_count if min_count == max_count else min_count + 1
 
     print(f'Assignment of {domain} papers complete')
 
