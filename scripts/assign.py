@@ -35,8 +35,8 @@ review_kwargs = {'csvfile': 'responses.csv',
 responses = get_reviewer_info(**review_kwargs)
 # Fix for domains with commas in them
 domain_count = get_domain_order(responses.domain)
-rev = populate_reviewers(responses)
-reviewer_pools = get_reviewer_pools(domain_count, rev)
+rev_list = populate_reviewers(responses)
+reviewer_pools = get_reviewer_pools(domain_count, rev_list)
 
 subs_kwargs = {'csvfile': 'submissions.csv',
                'columns': ['Applicant-First Name',
@@ -76,3 +76,5 @@ for domain in domain_count.keys()[::-1]:
 
     print(f'Assignment of {domain} papers complete')
 
+
+assert all([len(sub.reviewers) == 3 for sub in sublist])

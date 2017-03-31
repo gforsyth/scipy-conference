@@ -62,9 +62,9 @@ def populate_reviewers(responses):
     Dataframe has columns "name", "email", "domain" where "domain" is a
     comma-separated list
     """
-    reviewers = dict()
+    reviewers = []
     for rev in responses.itertuples():
-        reviewers[rev.email] =  (Reviewer(rev.name,
+        reviewers.append(Reviewer(rev.name,
                                   rev.email,
                                   rev.domain.split(', ')))
 
@@ -85,7 +85,7 @@ def get_reviewer_pools(count, reviewers):
     """
     reviewer_pools = {}
     for category in count.keys():
-        reviewer_pools[category] = [per for per in reviewers.values()
+        reviewer_pools[category] = [per for per in reviewers
                                     if category in per.domains]
         reviewer_pools[category] = sorted(reviewer_pools[category],
                                           key=domain_count_sort)
