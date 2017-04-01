@@ -27,6 +27,53 @@ def assign_paper(reviewer, submission, assign_count):
         submission.reviewers.append(reviewer)
         return True
 
+def do_assign(reviewers, reviewers_cycle, sub):
+    """
+    Assigns a reviewer to the submission `sub`
+
+    Arguments
+    ---------
+    reviewers : list
+        reviewers in domain ``domain``
+    reviewers_cycle : itertools cycle
+        reviewers cycle in domain ``domain``
+    sub : Submission
+        submission to be assigned
+    """
+
+    domain = sub.domain
+    reviewer = next(reviewers_cycle)
+    assign_count = get_assign_count(reviewers)
+
+    while not assign_paper(reviewer, sub, assign_count):
+        reviewer = next(reviewers_cycle)
+        assign_count = get_assign_count(reviewers)
+
+def get_assign_count(reviewers):
+    """
+    Figure out max # of papers one person should have to review at the moment
+
+    Arguments
+    ---------
+    reviewers : list
+        reviewers in a given domain
+
+    Returns
+    -------
+    assign_count : int
+        max # of papers to assign to one person
+    """
+    try:
+        min_count = min([len(rev.to_review) for rev in
+                        reviewers if hasattr(rev, 'to_review')])
+        max_count = max([len(rev.to_review) for rev in
+                        reviewers if hasattr(rev, 'to_review')])
+    except ValueError:
+        min_count, max_count = 0, 0
+    return min_count + 1 if min_count == max_count else min_count
+
+
+
 review_kwargs = {'csvfile': 'responses.csv',
                  'columns': ['Name:',
                              'Email',
@@ -36,12 +83,6 @@ review_kwargs = {'csvfile': 'responses.csv',
                                  'Domain you volunteer to review (check all that apply)': 'domain'},
                 'dup_drop': 'email'}
 
-
-responses = get_reviewer_info(**review_kwargs)
-# Fix for domains with commas in them
-domain_count = get_domain_order(responses.domain)
-rev_list = populate_reviewers(responses)
-reviewer_pools = get_reviewer_pools(domain_count, rev_list)
 
 subs_kwargs = {'csvfile': 'submissions.csv',
                'columns': ['Applicant-First Name',
@@ -53,31 +94,27 @@ subs_kwargs = {'csvfile': 'submissions.csv',
                             ]
               }
 
+responses = get_reviewer_info(**review_kwargs)
+# Fix for domains with commas in them
+domain_count = get_domain_order(responses.domain)
+rev_list = populate_reviewers(responses)
+reviewer_pools = get_reviewer_pools(domain_count, rev_list)
+
 subs, sub_count = get_submissions(**subs_kwargs)
 sublist = populate_submissions(subs)
 submission_pools = get_submission_pools(sub_count, sublist)
 
 
+REVIEWERS_PER_SUBMISSION = 3
+
 # start assigning to areas with fewest number of reviewers first
 for domain in domain_count.keys()[::-1]:
-    reviewers = itertools.cycle(reviewer_pools[domain])
-    # run each submission 3 times
-    submissions = iter(submission_pools.get(domain, '') * 3)
+    submissions = iter(submission_pools.get(domain, '') * REVIEWERS_PER_SUBMISSION)
+    reviewers = reviewer_pools[domain]
+    reviewers_cycle = itertools.cycle(reviewers)
 
-    assign_count = 0
     for sub in submissions:
-        # If we run out of reviewers reload the list and pop the submission to
-        # the back of the queue
-        reviewer = next(reviewers)
-
-        while not assign_paper(reviewer, sub, assign_count):
-            reviewer = next(reviewers)
-
-            min_count = min([len(rev.to_review) for rev in
-                            reviewer_pools[domain] if hasattr(rev, 'to_review')])
-            max_count = max([len(rev.to_review) for rev in
-                            reviewer_pools[domain] if hasattr(rev, 'to_review')])
-            assign_count = min_count if min_count == max_count else min_count + 1
+        do_assign(reviewers, reviewers_cycle, sub)
 
     print(f'Assignment of {domain} papers complete')
 
