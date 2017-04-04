@@ -13,8 +13,8 @@ def assign_paper(reviewer, submission, assign_count):
     """
     if not hasattr(reviewer, 'to_review'):
         reviewer.to_review = []
-    if not hasattr(sub, 'reviewers'):
-        sub.reviewers = []
+    if not hasattr(submission, 'reviewers'):
+        submission.reviewers = []
 
     if reviewer.email in submission.emails:
         return False
@@ -48,6 +48,7 @@ def do_assign(reviewers, reviewers_cycle, sub):
     while not assign_paper(reviewer, sub, assign_count):
         reviewer = next(reviewers_cycle)
         assign_count = get_assign_count(reviewers)
+
 
 def get_assign_count(reviewers):
     """
