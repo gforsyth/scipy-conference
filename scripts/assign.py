@@ -11,14 +11,11 @@ def assign_paper(reviewer, submission, assign_count):
     - Reviewer is not already reviewing this paper
     - That reviewer isn't already assigned papers > assign_count
     """
-    if not hasattr(reviewer, 'to_review'):
-        reviewer.to_review = []
-    if not hasattr(submission, 'reviewers'):
-        submission.reviewers = []
-
     if reviewer.email in submission.emails:
         return False
     elif submission in reviewer.to_review:
+        return False
+    elif submission.subid in reviewer.cois:
         return False
     elif len(reviewer.to_review) > assign_count:
         return False

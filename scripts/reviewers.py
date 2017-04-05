@@ -10,10 +10,12 @@ import pandas
 EMAIL_REGEX = re.compile(r'[\w\.-]+@[\w\.-]+')
 
 class Reviewer(object):
-    def __init__(self, name, email, domains):
+    def __init__(self, name, email, domains, to_review=[], cois=[]):
         self.name = name
         self.email = email
         self.domains = domains
+        self.cois = cois
+        self.to_review = to_review
 
     def __repr__(self):
         return f"{self.name}, {self.email}"

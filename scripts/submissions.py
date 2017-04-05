@@ -5,12 +5,13 @@ APP_REGEX = re.compile(r'Applicant \d: (\w*)')
 EMAIL_REGEX = re.compile(r'[\w\.-]+@[\w\.-]+')
 
 class Submission(object):
-    def __init__(self, authors, emails, title, domain, subid):
+    def __init__(self, authors, emails, title, domain, subid, reviewers=[]):
         self.authors = authors
         self.emails = emails
         self.title = title
         self.domain = domain
         self.subid = subid
+        self.reviewers = reviewers
 
     def __repr__(self):
         return f"{self.title}, {self.domain}"
