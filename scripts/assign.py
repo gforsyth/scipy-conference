@@ -13,12 +13,14 @@ def assign_paper(reviewer, submission, assign_count):
     """
     if not hasattr(reviewer, 'to_review'):
         reviewer.to_review = []
-    if not hasattr(sub, 'reviewers'):
-        sub.reviewers = []
+    if not hasattr(submission, 'reviewers'):
+        submission.reviewers = []
 
     if reviewer.email in submission.emails:
         return False
     elif submission in reviewer.to_review:
+        return False
+    elif submission.subid in reviewer.cois:
         return False
     elif len(reviewer.to_review) > assign_count:
         return False
@@ -74,50 +76,53 @@ def get_assign_count(reviewers):
 
 
 
-review_kwargs = {'csvfile': 'responses.csv',
-                 'columns': ['Name:',
-                             'Email',
-                             'Domain you volunteer to review (check all that apply)'],
-                 'rename_dict': {'Name:': 'name',
-                                 'Email': 'email',
-                                 'Domain you volunteer to review (check all that apply)': 'domain'},
-                'dup_drop': 'email'}
+def main():
+    review_kwargs = {'csvfile': 'responses.csv',
+                    'columns': ['Name:',
+                                'Email',
+                                'Domain you volunteer to review (check all that apply)'],
+                    'rename_dict': {'Name:': 'name',
+                                    'Email': 'email',
+                                    'Domain you volunteer to review (check all that apply)': 'domain'},
+                    'dup_drop': 'email'}
 
 
-subs_kwargs = {'csvfile': 'submissions.csv',
-               'columns': ['Applicant-First Name',
-                           'Applicant-Last Name',
-                           'Applicant-E-mail Address',
-                           'Submission-Initial Stage-Title',
-                           'Submission-Initial Stage-Submission Subgroup',
-                           'Submission ID',
-                            ]
-              }
+    subs_kwargs = {'csvfile': 'submissions.csv',
+                'columns': ['Applicant-First Name',
+                            'Applicant-Last Name',
+                            'Applicant-E-mail Address',
+                            'Submission-Initial Stage-Title',
+                            'Submission-Initial Stage-Submission Subgroup',
+                            'Submission ID',
+                                ]
+                }
 
-responses = get_reviewer_info(**review_kwargs)
-# Fix for domains with commas in them
-domain_count = get_domain_order(responses.domain)
-rev_list = populate_reviewers(responses)
-reviewer_pools = get_reviewer_pools(domain_count, rev_list)
+    responses = get_reviewer_info(**review_kwargs)
+    # Fix for domains with commas in them
+    domain_count = get_domain_order(responses.domain)
+    rev_list = populate_reviewers(responses)
+    reviewer_pools = get_reviewer_pools(domain_count, rev_list)
 
-subs, sub_count = get_submissions(**subs_kwargs)
-sublist = populate_submissions(subs)
-submission_pools = get_submission_pools(sub_count, sublist)
-
-
-REVIEWERS_PER_SUBMISSION = 3
-
-# start assigning to areas with fewest number of reviewers first
-for domain in domain_count.keys()[::-1]:
-    submissions = iter(submission_pools.get(domain, '') * REVIEWERS_PER_SUBMISSION)
-    reviewers = reviewer_pools[domain]
-    reviewers_cycle = itertools.cycle(reviewers)
-
-    for sub in submissions:
-        do_assign(reviewers, reviewers_cycle, sub)
-
-    print(f'Assignment of {domain} papers complete')
+    subs, sub_count = get_submissions(**subs_kwargs)
+    sublist = populate_submissions(subs)
+    submission_pools = get_submission_pools(sub_count, sublist)
 
 
-assert all([len(sub.reviewers) == 3 for sub in sublist])
-assert all([len(rev.to_review) < 5 for rev in rev_list])
+    REVIEWERS_PER_SUBMISSION = 3
+
+    # start assigning to areas with fewest number of reviewers first
+    for domain in domain_count.keys()[::-1]:
+        submissions = iter(submission_pools.get(domain, '') * REVIEWERS_PER_SUBMISSION)
+        reviewers = reviewer_pools[domain]
+        reviewers_cycle = itertools.cycle(reviewers)
+
+        for sub in submissions:
+            do_assign(reviewers, reviewers_cycle, sub)
+
+        print(f'Assignment of {domain} papers complete')
+
+
+    assert all([len(sub.reviewers) == 3 for sub in sublist])
+    assert all([len(rev.to_review) < 5 for rev in rev_list])
+
+    return rev_list, sublist

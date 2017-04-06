@@ -11,6 +11,7 @@ class Submission(object):
         self.title = title
         self.domain = domain
         self.subid = subid
+        self.reviewers = []
 
     def __repr__(self):
         return f"{self.title}, {self.domain}"
