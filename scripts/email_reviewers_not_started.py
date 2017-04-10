@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from ldassn import load_rev_sublist
-from rev_report import get_reviewers_not_started
+from reviewers import get_reviewers_not_started
 
 if len(sys.argv) < 3:
     print('Usage: ./email_reviewers_not_started.py ReviewerListReport.csv review_reminder.txt.in')
