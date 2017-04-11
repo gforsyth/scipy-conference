@@ -18,7 +18,7 @@ def save_rev_sublist(sublist,
 
 def load_rev_sublist(subpickle='/home/gil/Dropbox/sublist.pickle',
                      revpickle='/home/gil/Dropbox/revlist.pickle',
-                     assign_csv='scipy2017.reviewer.assignments - assignments.csv'):
+                     assign_csv='assignments.csv'):
     with open(subpickle, 'rb') as f:
         sublist = pickle.load(f)
 
