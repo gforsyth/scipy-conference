@@ -32,38 +32,45 @@ for domain in domain_pool.keys():
 
     """
     if norevs:
-        email_body += "\n\tSubmissions with no reviews (and the assigned reviewers):\n\n"
+        email_body += "\n    Submissions with no reviews (and the assigned reviewers):\n\n"
         for sub in norevs:
-            email_body += '\t' + str(sub.title) + '\n'
+            email_body += '    ' + str(sub.title) + '\n'
             for rev in sub.reviewers:
-                email_body += '\t' + str(rev) + '\n'
+                email_body += '    ' + str(rev) + '\n'
             email_body += '\n'
 
     for i in range(4, 0, -1):
         revs = [rev for rev in domain_pool[domain] if len(rev.to_review) == i]
         if revs:
-            email_body += '\n\tReviewers who have to complete {} review(s): \n\n'.format(i)
+            email_body += '\n    Reviewers who have to complete {} review(s): \n\n'.format(i)
             for rev in revs:
-                email_body += '\t' + str(rev) + '\n'
+                email_body += '    ' + str(rev) + '\n'
 
-            email_body += '\n\tAnd a easily copy-pasteable list of their email address:\n\t'
+            email_body += '\n    And a easily copy-pasteable list of their email address:\n    '
             email_body += ', '.join([rev.email for rev in revs])
             email_body += '\n\n'
 
     email_body += '\n    And if you just want to email-blast all of the reviewers with work still to do in your area: \n\n'
-    email_body += '\t'
+    email_body += '    '
     email_body += ', '.join([rev.email for rev in domain_pool[domain]])
 
+    email_body += """
+    \n\n
+    As always, please let us know if you have any questions or concerns, or just want to yell about eTouches.
+
+    Thanks,
+    Lorena & Gil
+    Program Co-chairs"""
+
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = 'SciPy2017 review reminder'
+    msg['Subject'] = 'SciPy2017 Minisymposia Info for Chairs'
     msg['From'] = 'Gil Forsyth <gilforsyth@gmail.com>'
     msg['To'] = ', '.join([chair.email for chair in chairs[domain]])
     msg['Cc'] = 'Lorena Barba <labarba@email.gwu.edu>,'
     msg['Date'] = email.utils.formatdate()
     msg.attach(MIMEText(email_body, 'plain'))
     from_address = 'Gil Forsyth <gilforsyth@gmail.com>'
-    to_address = ['Lorena Barba <labarba@email.gwu.edu>'] + [chair.email for chair in chairs[domain]]
-    to_address = ', '.join(to_address)
+    to_address = [chair.email for chair in chairs[domain]]
     print(email_body)
 
     server.sendmail(from_address, to_address, msg.as_string())
