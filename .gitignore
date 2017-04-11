@@ -1,1 +1,4 @@
 _build/*
+/scripts/chairs.py
+/scripts/assignments.csv
+/scripts/ReviewerListReport_220975.csv
