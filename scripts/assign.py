@@ -29,6 +29,11 @@ def assign_paper(reviewer, submission, assign_count):
         submission.reviewers.append(reviewer)
         return True
 
+def do_single_assign(revlist, sub):
+    reviewers = [rev for rev in revlist if sub.domain in rev.domains]
+    reviewer_cycle = itertools.cycle(reviewers)
+    do_assign(reviewers, reviewer_cycle, sub)
+
 def do_assign(reviewers, reviewers_cycle, sub):
     """
     Assigns a reviewer to the submission `sub`
