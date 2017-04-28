@@ -27,7 +27,7 @@ def get_incomp_reviewers(csv='ReviewerListReport_220975.csv'):
 
     return domain_pool, revlist, sublist
 
-def load_filter_reviews(csv='ReviewerListReport_220975'):
+def load_filter_reviews(csv='ReviewerListReport_220975.csv'):
     revlist, sublist, revdict, subdict = load_rev_sublist()
     report = pandas.read_csv(csv)
     report = report[report['Submission Group'] == 'Conference Talks and Posters']
