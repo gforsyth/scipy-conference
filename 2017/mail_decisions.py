@@ -56,11 +56,13 @@ for sub in submissions:
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'SciPy2017 Abstract Decision - Action Requested'
     msg['From'] = 'Gil Forsyth <gilforsyth@gmail.com>'
-    msg['To'] = [em.strip() for em in submission['emails']]
+    msg['To'] = ', '.join([em.strip() for em in sub['emails']])
     msg['Cc'] = 'Lorena Barba <labarba@email.gwu.edu>,'
     msg['Date'] = email.utils.formatdate()
     msg.attach(MIMEText(email_body, 'plain'))
     from_address = 'Gil Forsyth <gilforsyth@gmail.com'
-    to_address = [em.strip() for em in submission['emails']]
+    to_address = [em.strip() for em in sub['emails']]
 
     print(email_body)
+
+    server.sendmail(from_address, to_address, msg.as_string())
