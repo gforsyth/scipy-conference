@@ -1,0 +1,55 @@
+Dear {{ names }},
+
+We are pleased to inform you that your talk submission
+
+"{{ title }}"
+
+has been accepted for SciPy 2017 in the {{ track }} track!
+
+Congratulations!
+
+Please confirm by May 5th (that's this Friday!) that you are still available to
+present your talk in Austin on July 12th - 14th.
+
+Please also see the message below from the proceedings committee. 
+
+Thank you and we hope to see you in Austin!
+
+Sincerely,
+Gil Forsyth & Lorena Barba
+SciPy 2017 Program co-chairs
+
+
+Call for Papers
+===============
+
+Congratulations on having your abstract accepted for this year's event -- we 
+look forward to seeing your poster or presentation! As in the past, SciPy2017 
+will release a conference proceedings, and you are invited to contribute a 
+full-length paper (up to 8 pages) expanding on your abstract.
+
+The proceedings are aimed at highlighting significant contributions to 
+scientific computing in Python, such as:
+
+- new software packages that support the Scientific Python Stack
+- domain-specific applications of Python in any field of research
+- significant improvements to existing software packages
+- hardware systems designed to support the Python stack
+- applications of scientific computing in education
+
+Papers should be submitted as pull requests by May 30th.  At that point, the 
+two-week open review period will begin.  During this time, members from the 
+program committee and the scientific Python community at large may provide 
+feedback, which should be addressed through discussion on GitHub and by 
+updating the pull request.
+
+Further instructions can be found here:
+
+https://github.com/scipy-conference/scipy_proceedings
+
+Sincerely, the SciPy 2017 Proceedings Chairs,
+
+- Katy Huff <katyhuff@gmail.com>
+- David Lippa <dalippa@gmail.com>
+- Dillon Niederhut <dniederhut@enthought.com>
+- Mike Pacer <michaelpacer@gmail.com>

@@ -1,0 +1,16 @@
+Dear {{ names }},
+
+We received many great talk submissions this year and unfortunately your talk,
+"{{ title }}", was not selected for inclusion on this year's program. However,
+on the recommendation of the symposia chair for the {{ track }} track, we would
+like to offer you the opportunity to present a poster at SciPy 2017.
+
+Please confirm by May 5th (that's this Friday!) if you would like to present a
+poster at SciPy and that you are still available to attend in Austin on July
+12th - 14th.
+
+Thank you and we hope to see you in Austin!
+
+Sincerely,
+Gil Forsyth & Lorena Barba
+SciPy 2017 Program co-chairs
