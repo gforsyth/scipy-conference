@@ -1,17 +1,25 @@
 Dear {{ names }},
 
-We are pleased to inform you that your talk submission
+Thank you for submitting to SciPy 2017. We had a record number of submissions
+this year and we are looking forward to the best SciPy yet!
 
-"{{ title }}"
-
-has been accepted for SciPy 2017 in the {{ track }} track!
+We are pleased to inform you that your abstract, "{{ title }}", 
+has been accepted for presentation as a talk in the {{ track }} track!
 
 Congratulations!
 
 Please confirm by May 5th (that's this Friday!) that you are still available to
-present your talk in Austin on July 12th - 14th.
+present your talk by responding to this email.
 
-Please also see the message below from the proceedings committee. 
+The talks and posters will be given during the three main days of the conference
+in Austin on July 12th - 14th.
+
+If you would like to have your bio and photograph listed on the conference Web
+site (http://scipy2017.scipy.org) please send these materials along with your
+title to Jill Cowan (jillc@enthought.com).
+
+Please also see the message below from the proceedings committee about the
+option of submitting a full paper to accompany your talk.
 
 Thank you and we hope to see you in Austin!
 

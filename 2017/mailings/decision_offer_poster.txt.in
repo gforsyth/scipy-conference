@@ -1,6 +1,6 @@
 Dear {{ names }},
 
-We received many great talk submissions this year and unfortunately your talk,
+We received many great abstracts this year and unfortunately your talk,
 "{{ title }}", was not selected for inclusion on this year's program. However,
 on the recommendation of the symposia chair for the {{ track }} track, we would
 like to offer you the opportunity to present a poster at SciPy 2017.
@@ -9,8 +9,56 @@ Please confirm by May 5th (that's this Friday!) if you would like to present a
 poster at SciPy and that you are still available to attend in Austin on July
 12th - 14th.
 
+Please confirm by May 5th (that's this Friday!) that you are still available to
+present your poster by responding to this email.
+
+The talks and posters will be given during the three main days of the conference
+in Austin on July 12th - 14th.
+
+If you would like to have your bio and photograph listed on the conference Web
+site (http://scipy2017.scipy.org) please send these materials along with your
+title to Jill Cowan (jillc@enthought.com).
+
+Please also see the message below from the proceedings committee about the
+option of submitting a full paper to accompany your poster.
+
 Thank you and we hope to see you in Austin!
 
 Sincerely,
 Gil Forsyth & Lorena Barba
 SciPy 2017 Program co-chairs
+
+
+Call for Papers
+===============
+
+Congratulations on having your abstract accepted for this year's event -- we 
+look forward to seeing your poster or presentation! As in the past, SciPy2017 
+will release a conference proceedings, and you are invited to contribute a 
+full-length paper (up to 8 pages) expanding on your abstract.
+
+The proceedings are aimed at highlighting significant contributions to 
+scientific computing in Python, such as:
+
+- new software packages that support the Scientific Python Stack
+- domain-specific applications of Python in any field of research
+- significant improvements to existing software packages
+- hardware systems designed to support the Python stack
+- applications of scientific computing in education
+
+Papers should be submitted as pull requests by May 30th.  At that point, the 
+two-week open review period will begin.  During this time, members from the 
+program committee and the scientific Python community at large may provide 
+feedback, which should be addressed through discussion on GitHub and by 
+updating the pull request.
+
+Further instructions can be found here:
+
+https://github.com/scipy-conference/scipy_proceedings
+
+Sincerely, the SciPy 2017 Proceedings Chairs,
+
+- Katy Huff <katyhuff@gmail.com>
+- David Lippa <dalippa@gmail.com>
+- Dillon Niederhut <dniederhut@enthought.com>
+- Mike Pacer <michaelpacer@gmail.com>
