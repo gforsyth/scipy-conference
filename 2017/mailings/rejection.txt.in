@@ -3,11 +3,23 @@ Dear {{ names }},
 Thank you for submitting to SciPy 2017. We had 148 submissions
 for 63 speaking slots this year and we are looking forward to the best SciPy yet!
 
-Because of the large number of submissions and a limited number of talk slots,
-we were forced to decline many high quality talk proposals. Unfortunately, after
-review by the Program Committee, your talk proposal has been declined. 
+The large number of submissions means that
+we had to reject many high-quality talk proposals. Unfortunately, after
+review by the Program Committee, your talk was declined.
 
+This year, SciPy moved to a double-open peer review process, and we hope
+you will value in the candid comments from your reviewers. Also note that 
+this year, SciPy requested that reviewers abide by new Guidelines [1], aimed
+at interrupting implicit bias.
+
+We hope you still find it valuable to attend SciPy 2017, and consider
+submitting your work in future editions. Our conference continues to 
+develop a strong community that values diversity, abides by its code of
+conduct, and benefits from open discourse.
 
 The SciPy 2017 Program Chairs,
 Gil Forsyth
-Lorena Barba
+Lorena A. Barba
+
+[1] SciPy 2017 Chair and Reviewer Guidelines:
+https://scipy2017.scipy.org/ehome/220975/532468/
