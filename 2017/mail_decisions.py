@@ -49,7 +49,7 @@ for sub in submissions:
         sub['domain'] = domain
 
     email_body = template.render(
-        names = ','.join(sub['authors']),
+        names = ', '.join(sub['authors']),
         title = sub['title'],
         track = sub['domain'],
     )
