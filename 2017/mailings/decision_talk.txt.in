@@ -1,7 +1,7 @@
 Dear {{ names }},
 
-Thank you for submitting to SciPy 2017. We had a record number of submissions
-this year and we are looking forward to the best SciPy yet!
+Thank you for submitting to SciPy 2017. We had 148 submissions
+for 63 speaking slots this year and we are looking forward to the best SciPy yet!
 
 We are pleased to inform you that your abstract, "{{ title }}", 
 has been accepted for presentation as a talk in the {{ track }} track!

@@ -1,6 +1,6 @@
 Dear {{ names }},
 
-Thank you for submitting to SciPy 2017. We had a record number of submissions
+Thank you for submitting to SciPy 2017. We had 148 submissions
 this year and we are looking forward to the best SciPy yet!
 
 We are pleased to inform you that your abstract, "{{ title }}", 
