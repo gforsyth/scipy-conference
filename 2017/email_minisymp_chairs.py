@@ -1,3 +1,21 @@
+#!/usr/bin/env python
+
+"""This script sends an email to the minisymposia chairs with a list of
+'delinquent' reviews in their track, so that they can _gently_ prod those
+reviewers in to completing their assigned reviews.
+
+Note that the `chairs` import is not version controlled as it contains a bunch
+of email addresses that we aren't publishing publicly here.
+
+The format of those email address is as follows:
+
+`chairs` is a dict, the keys of which are the track names and the values of which are lists, where each list element is a namedtuple `chair`:
+
+```
+chair = namedtuple('chair', ['name', 'email'])
+```
+"""
+
 import sys
 import email
 import email.utils
@@ -19,7 +37,7 @@ server.starttls()
 server.login(username, password)
 
 for domain in domain_pool.keys():
-    if domain == 'General':
+    if domain == 'General': # program chairs handle general talks, so no email to ourselves
         continue
     norevs = [sub for sub in sublist if len(sub.reviewers) == 3 and sub.domain == domain]
     email_body = """

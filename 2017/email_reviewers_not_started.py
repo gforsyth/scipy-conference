@@ -1,5 +1,21 @@
 #!/usr/bin/env python
 
+"""Script to mail all SciPy reviewers who have not yet started a review.
+
+This script was written for use with the eTouches/eSelect backend. The
+`ReviewerListReport.csv` file expected as input can be obtained as follows: Log
+in to eTouches, select "Reports", then select "Reviewer List" and export to
+csv.
+
+That particular report will only include names of those who have at least
+started a review and clicked "Save and continue later" so the set difference
+between those names and the list of reviewers are those who have not started a
+review. Unfortunately, this means we have to compare _names_ which is a _bad
+idea_. Expect some false positives if people have entered their names/titles
+differently in different systems (hopefully this will not happen, but expect
+the worst.)
+
+"""
 import sys
 import email
 import email.utils

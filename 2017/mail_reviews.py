@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+"""This script was written for use with the eTouches/eSelect backend. The
+`reviews.csv` file expected as input can be obtained as follows:
+
+Log in to eTouches, select "Reports", then select "Reviewer List" and export to
+csv. Make sure to click the radio button that exports ALL fields, not just the
+current view.
+
+"""
+
 import sys
 import email
 import email.utils

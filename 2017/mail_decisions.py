@@ -1,3 +1,17 @@
+#!/usr/bin/env python
+
+"""The `decisions.csv` file was originally assembled as a Google spreadsheet,
+compiling the results of all of the mini-symposia chairs for each track.
+
+The script expects a csv with the following columns:
+`title` : submission title
+`domain` : the submission track / domain
+`subid`: the submission id (in this case from eSelect)
+`names`: list of author names, separated by semi-colons if > 1
+`emails`: list of author emails, again separated by semi-colons if > 1
+
+"""
+
 import csv
 import sys
 import email
