@@ -1,0 +1,17 @@
+Dear {{ names }},
+
+Thank you for submitting to SciPy 2017. We had 148 submissions
+for 63 speaking slots this year and we are looking forward to the best SciPy yet!
+
+This the first year that we have had double-open reviews for SciPy submissions and we hope to continue to take SciPy in a direction of openness and transparency.
+
+Here are the reviews and scores for your submission "{{ title }}":
+
+{{ reviews }}
+
+
+Thank you and we hope to see you in Austin!
+
+Sincerely,
+Gil Forsyth & Lorena A. Barba
+SciPy 2017 Program co-chairs
