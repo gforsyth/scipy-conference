@@ -9,6 +9,8 @@ Here are the reviews and scores for your submission "{{ title }}":
 
 {{ reviews }}
 
+If you would like to edit the text of your abstract before it goes live on the
+SciPy2017 website, you can ___
 
 Thank you and we hope to see you in Austin!
 
