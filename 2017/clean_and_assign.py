@@ -39,14 +39,20 @@ pc = pd.read_excel(easy_chair_data, sheet_name='Program committee')
 pc_csv = pd.read_csv(reviewer_signup)
 # rename horrible column
 pc_csv['domain'] = pc_csv['Domain you volunteer to review (check all that apply)']
+# strip whitespace
+pc_csv.Email = pc_csv.Email.str.strip()
+pc_csv.Email = pc_csv.Email.str.lower()
+# Drop reviewers who only checked 'library science' (bummer)
+pc_csv = pc_csv[~(pc_csv.domain == 'Library Science and Digital Humanities')]
+
 
 topics = []
 for _, _, _, _, _, email, *rest in pc.itertuples():
+    email = email.strip().lower()
     if any(pc_csv.Email == email):
         topics.append(pc_csv[pc_csv.Email == email]['domain'].values[0])
     else:
         topics.append('None')
-topics
 
 pc['domain'] = topics
 # drop chairs and superchairs from df
