@@ -1,14 +1,13 @@
 import pandas
 import pickle
-import pickle
 
 import sys
 sys.setrecursionlimit(3000) # the reviewer and submission lists are deeply linked. this lets pickle work
 
 def save_rev_sublist(sublist,
                     revlist,
-                    subpickle='/home/gil/Dropbox/sublist.pickle',
-                    revpickle='/home/gil/Dropbox/revlist.pickle',):
+                    subpickle='/home/gil/Dropbox/scipy/2018/sublist.pickle',
+                    revpickle='/home/gil/Dropbox/scipy/2018/revlist.pickle',):
     with open(subpickle, 'wb') as f:
         pickle.dump(sublist, f)
 

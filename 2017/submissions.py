@@ -38,14 +38,19 @@ def get_submission_pools(count, sublist):
 
     return submission_pools
 
-def populate_submissions(subs):
+def populate_submissions(subs, authors):
     sublist = []
     for sub in subs.itertuples():
-        _, subid, title, domain, emails, first_names, last_names = sub
-        names = list(zip(re.findall(APP_REGEX, first_names),
-                         re.findall(APP_REGEX, last_names)))
-        names = [' '.join(name) for name in names]
-        emails = re.findall(EMAIL_REGEX, emails)
+        subid, _, title, domain = sub
+        names = []
+        emails = []
+        for auth in authors[authors['submission #'] == subid].itertuples():
+            _, _, first, last, email, *rest = auth
+            if not isinstance(first, str):
+                first = ''
+            names.append(' '.join([first, last]))
+            emails.append(email)
+
         sublist.append(Submission(names, emails, title, domain, subid))
 
     return sublist

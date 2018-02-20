@@ -65,9 +65,13 @@ def populate_reviewers(responses):
     """
     reviewers = []
     for rev in responses.itertuples():
+        if rev.domain == 'None':
+            domain = ['General']
+        else:
+            domain = rev.domain
         reviewers.append(Reviewer(rev.name,
                                   rev.email,
-                                  rev.domain.split(', ')))
+                                  domain))
 
     return reviewers
 
