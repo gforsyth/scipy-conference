@@ -56,9 +56,9 @@ def do_assign(reviewers, reviewers_cycle, sub):
     while not assign_paper(reviewer, sub, assign_count):
         reviewer = next(reviewers_cycle)
         assign_count = get_assign_count(reviewers)
-        bump_me += 1
-        if bump_me > 30:
+        if bump_me > len(reviewers):
             assign_count += 1
+        bump_me += 1
 
 def get_assign_count(reviewers):
     """
