@@ -155,7 +155,11 @@ names = pd.read_csv('reviewer.csv', names=['id', 'name', 'email', 'role'])
 for rev in rev_list:
     rev.revid = names[names.name == rev.name]['id'].values[0]
 
-#return rev_list, sublist
+revcount = [len(rev.to_review) for rev in rev_list if hasattr(rev, 'to_review')]
+import numpy
+print(numpy.min(revcount))
+print(numpy.max(revcount))
+print(numpy.std(revcount))
 
 def write_csv_assigment(revlist):
     with open('reviewer_assignments.csv', 'w') as f:
