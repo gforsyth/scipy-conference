@@ -17,11 +17,21 @@ def save_rev_sublist(sublist,
 
 def load_rev_sublist(subpickle='/home/gil/Dropbox/scipy/2018/sublist.pickle',
                      revpickle='/home/gil/Dropbox/scipy/2018/revlist.pickle'):
-    with open(subpickle, 'rb') as f:
-        sublist = pickle.load(f)
+#    with open(subpickle, 'rb') as f:
+#        sublist = pickle.load(f)
 
     with open(revpickle, 'rb') as f:
         revlist = pickle.load(f)
+
+    # something got corrupted, reconstruct
+    sublist = []
+    for rev in revlist:
+        try:
+            for sub in rev.to_review:
+                if not sub in sublist:
+                    sublist.append(sub)
+        except:
+            pass
 
     revdict = {**{rev.name: rev for rev in revlist}, **{rev.email: rev for rev in revlist}}
     subdict = {**{sub.title: sub for sub in sublist}, **{sub.subid: sub for sub in sublist}}

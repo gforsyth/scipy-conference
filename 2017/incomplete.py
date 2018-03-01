@@ -7,8 +7,8 @@ def get_comp_reviewers(csv='ReviewerListReport_220975.csv'):
 
     return top_reviewers
 
-def get_incomp_reviewers(csv='ReviewerListReport_220975.csv'):
-    revlist, sublist = load_filter_reviews(csv)
+def populate_domain_pool(revlist, sublist):
+
     delinquents = [rev for rev in revlist if len(rev.to_review) > 0]
     needy_subs = [sub for sub in sublist if len(sub.reviewers) > 0]
 
@@ -25,7 +25,7 @@ def get_incomp_reviewers(csv='ReviewerListReport_220975.csv'):
             if rev not in domain_pool[sub.domain]:
                 domain_pool[sub.domain].append(rev)
 
-    return domain_pool, revlist, sublist
+    return domain_pool
 
 def load_filter_reviews(csv='ReviewerListReport_220975.csv'):
     revlist, sublist, revdict, subdict = load_rev_sublist()
