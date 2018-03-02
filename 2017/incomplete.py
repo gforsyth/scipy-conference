@@ -22,7 +22,7 @@ def populate_domain_pool(revlist, sublist):
 
     for sub in needy_subs:
         for rev in sub.reviewers:
-            if rev not in domain_pool[sub.domain]:
+            if rev not in domain_pool[sub.domain] and rev in delinquents:
                 domain_pool[sub.domain].append(rev)
 
     return domain_pool
