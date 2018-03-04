@@ -24,10 +24,11 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from incomplete import get_incomp_reviewers
-from chairs import chairs
+from ldassn import load_rev_sublist
+from load_chairs import chairs
+from incomplete import populate_domain_pool
+from missing_reviews import update_rev_sub_lists
 
-domain_pool, revlist, sublist = get_incomp_reviewers()
 
 with open('auth', 'r') as f:
     password = f.read()
@@ -36,14 +37,23 @@ server = smtplib.SMTP('smtp.gmail.com:587')
 server.starttls()
 server.login(username, password)
 
+
+
+revlist, sublist, revdict, subdict = load_rev_sublist()
+revlist, sublist, revdict, subdict = update_rev_sub_lists(revlist, sublist, revdict, subdict)
+domain_pool = populate_domain_pool(revlist, sublist)
+
 for domain in domain_pool.keys():
-    if domain == 'General': # program chairs handle general talks, so no email to ourselves
+    if domain == 'general': # program chairs handle general talks, so no email to ourselves
         continue
-    norevs = [sub for sub in sublist if len(sub.reviewers) == 3 and sub.domain == domain]
-    email_body = """
+    norevs = [sub for sub in sublist if len(sub.reviewers) == 6 and sub.domain == domain]
+    print(f"{domain:-^80}")
+    email_body = f"""
     Dear chairs,
 
-    Thanks for being part of the SciPy 2017 Program Committee!
+    Thanks for being part of the SciPy 2018 Program Committee!
+
+    We are a little more than 1 week into the review period. There is still plenty of time to gather reviews, but it never hurts to give a little nudge to keep things moving.
 
     Here are a list of submissions/reviewers in your symposia that might need a
     little extra attention
@@ -56,32 +66,34 @@ for domain in domain_pool.keys():
             for rev in sub.reviewers:
                 email_body += '    ' + str(rev) + '\n'
             email_body += '\n'
+    else:
+        email_body += "\n      Oh good! All of the submissions in your track have at least one review!\n\n"
 
-    for i in range(4, 0, -1):
-        revs = [rev for rev in domain_pool[domain] if len(rev.to_review) == i]
-        if revs:
-            email_body += '\n    Reviewers who have to complete {} review(s): \n\n'.format(i)
-            for rev in revs:
-                email_body += '    ' + str(rev) + '\n'
+#    for i in range(6, 0, -1):
+#        revs = [rev for rev in domain_pool[domain] if len(rev.to_review) == i]
+#        if revs:
+#            email_body += '\n    Reviewers who have to complete {} review(s): \n\n'.format(i)
+#            for rev in revs:
+#                email_body += '    ' + str(rev) + '\n'
+#
+#            email_body += '\n    And a easily copy-pasteable list of their email address:\n    '
+#            email_body += ', '.join([rev.email for rev in revs])
+#            email_body += '\n\n'
 
-            email_body += '\n    And a easily copy-pasteable list of their email address:\n    '
-            email_body += ', '.join([rev.email for rev in revs])
-            email_body += '\n\n'
-
-    email_body += '\n    And if you just want to email-blast all of the reviewers with work still to do in your area: \n\n'
+    email_body += '\n    If you just want to email-blast all of the reviewers with work still to do in your area: \n\n'
     email_body += '    '
     email_body += ', '.join([rev.email for rev in domain_pool[domain]])
 
     email_body += """
     \n\n
-    As always, please let us know if you have any questions or concerns, or just want to yell about eTouches.
+    As always, please let us know if you have any questions or concerns.
 
     Thanks,
     Lorena & Gil
     Program Co-chairs"""
 
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = 'SciPy2017 Minisymposia Info for Chairs'
+    msg['Subject'] = 'SciPy2018 Minisymposia Review Progress'
     msg['From'] = 'Gil Forsyth <gilforsyth@gmail.com>'
     msg['To'] = ', '.join([chair.email for chair in chairs[domain]])
     msg['Cc'] = 'Lorena Barba <labarba@email.gwu.edu>,'
@@ -91,4 +103,4 @@ for domain in domain_pool.keys():
     to_address = [chair.email for chair in chairs[domain]]
     print(email_body)
 
-    server.sendmail(from_address, to_address, msg.as_string())
+#    server.sendmail(from_address, to_address, msg.as_string())
