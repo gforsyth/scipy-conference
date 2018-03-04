@@ -19,7 +19,18 @@ def generate_js_bookmarklet(html_doc, domain):
     # load submissions
     _, sublist, _, _ = load_rev_sublist()
 
-    subdf = get_papers_df(html_doc, sublist)
+    subdf = get_papers_df(html_doc)
+    domains = []
+
+    # iterate over papers df and create 'domain' column
+    for i, id, title in subdf.itertuples():
+        res = [sub.domain for sub in sublist if sub.title == title.strip()]
+        if res:
+            domains.append(res[0])
+        else:
+            domains.append('scipy tools')
+
+    subdf = subdf.assign(domain=domains)
 
     jsdomain = subdf[subdf.domain != domain][0].values
     jsdomain = [dom.strip().replace('l','r') for dom in jsdomain]
@@ -29,10 +40,9 @@ def generate_js_bookmarklet(html_doc, domain):
     return js
 
 @lru_cache(maxsize=None)
-def get_papers_df(html_doc, sublist):
+def get_papers_df(html_doc):
     """
-    Parse html_doc, grab the list of element ids of all papers, then 
-    merge them into a dataframe along with the domain information
+    Parse html_doc, grab the list of element ids of all papers
     """
     # create long raw string variable of source from status page in easychair
     soup = BeautifulSoup(html_doc, 'html.parser')
@@ -44,16 +54,4 @@ def get_papers_df(html_doc, sublist):
                 papers.append((item['id'], item.text))
 
     subdf = pd.DataFrame(papers)
-    domain = []
-
-    # iterate over papers df and create 'domain' column
-    for i, id, title in subdf.itertuples():
-        res = [sub.domain for sub in sublist if sub.title == title.strip()]
-        if res:
-            domain.append(res[0])
-        else:
-            domain.append('scipy tools')
-            
-    subdf = subdf.assign(domain=domain)
     return subdf
-                
