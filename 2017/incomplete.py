@@ -7,6 +7,21 @@ def get_comp_reviewers(csv='ReviewerListReport_220975.csv'):
 
     return top_reviewers
 
+def domain_pool_subs(sublist):
+
+    domains = set()
+    for sub in sublist:
+        domains.add(sub.domain)
+
+    domain_pool = dict()
+    for domain in domains:
+        domain_pool[domain] = []
+
+    for sub in sublist:
+        domain_pool[sub.domain].append(sub)
+
+    return domain_pool
+
 def populate_domain_pool(revlist, sublist):
 
     delinquents = [rev for rev in revlist if len(rev.to_review) > 0]

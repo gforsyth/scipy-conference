@@ -53,7 +53,8 @@ for domain in domain_pool.keys():
 
     Thanks for being part of the SciPy 2018 Program Committee!
 
-    We are a little more than 1 week into the review period. There is still plenty of time to gather reviews, but it never hurts to give a little nudge to keep things moving.
+    Reviews are due by the end-of-day on March 15th (PST).
+    We have received 636 reviews so far, roughly 56% of the total number of expected reviews.
 
     Here are a list of submissions/reviewers in your symposia that might need a
     little extra attention
