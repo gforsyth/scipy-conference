@@ -1,4 +1,3 @@
-import sys
 import email
 import email.utils
 import jinja2
@@ -7,13 +6,10 @@ import pandas as pd
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from ldassn import load_rev_sublist
+from load_save import load_rev_sublist
 from load_chairs import chairs
-from incomplete import populate_domain_pool
-from missing_reviews import update_rev_sub_lists
-from incomplete import domain_pool_subs
+from domain import domain_pool_subs
 
-from incomplete import populate_domain_pool
 from review_bookmarklet_generator import generate_js_bookmarklet
 
 
@@ -64,15 +60,15 @@ for domain in domain_pool.keys():
                                 domain_slots=talk_slots[domain], domain=domain, bookmarklet=bookmarklet)
 
 
-#    msg = MIMEMultipart('alternative')
-#    msg['Subject'] = 'SciPy2018 Minisymposia Talk Selection Information'
-#    msg['From'] = 'Gil Forsyth <gilforsyth@gmail.com>'
-#    msg['To'] = ', '.join([chair.email for chair in chairs[domain]])
-#    msg['Cc'] = 'Lorena Barba <labarba@email.gwu.edu>,'
-#    msg['Date'] = email.utils.formatdate()
-#    msg.attach(MIMEText(email_body, 'plain'))
-#    from_address = 'Gil Forsyth <gilforsyth@gmail.com>'
-#    to_address = [chair.email for chair in chairs[domain]]
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = 'SciPy2018 Minisymposia Talk Selection Information'
+    msg['From'] = 'Gil Forsyth <gilforsyth@gmail.com>'
+    msg['To'] = ', '.join([chair.email for chair in chairs[domain]])
+    msg['Cc'] = 'Lorena Barba <labarba@email.gwu.edu>,'
+    msg['Date'] = email.utils.formatdate()
+    msg.attach(MIMEText(email_body, 'plain'))
+    from_address = 'Gil Forsyth <gilforsyth@gmail.com>'
+    to_address = [chair.email for chair in chairs[domain]]
     print(email_body)
 
 #    server.sendmail(from_address, to_address, msg.as_string())

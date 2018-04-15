@@ -24,7 +24,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from ldassn import load_rev_sublist
+from load_save import load_rev_sublist
 from reviewers import get_reviewers_not_started
 
 if len(sys.argv) < 3:

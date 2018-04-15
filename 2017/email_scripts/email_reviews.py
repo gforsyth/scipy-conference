@@ -1,15 +1,40 @@
+"""This script was written for use with the easychair backend.
+The expected input data file can be obtained from EasyChair as follows:
+
+Log in to Easychair (You need to be either a "chair" or "superchair")
+Go to Premium -> Conference Data Download
+Download the excel sheet
+
+The script also expects to find a plaintext file
+with a password for logging in to gmail.
+Filename is specified in `mail_config.yaml`
+Could this be improved?  Of course.
+"""
+import yaml
+import time
 import smtplib
 import pandas as pd
 import email.utils
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from ldassn import load_rev_sublist
+try:
+    with open('configs/config.yaml', 'r') as f:
+        config = yaml.load(f)
+except FileNotFoundError:
+    print("No `config.yaml` file found")
+    raise
 
+try:
+    with open(config['gmail']['password_file'], 'r') as f:
+        password = f.read()
+except FileNotFoundError:
+    print("Couldn't find the `auth` file for email login")
+    raise
 
-with open('auth', 'r') as f:
-    password = f.read()
-username = 'gilforsyth@gmail.com'
+from load_save import load_rev_sublist
+
+username = config['gmail']['username']
 server = smtplib.SMTP('smtp.gmail.com:587')
 server.starttls()
 server.login(username, password)
@@ -57,5 +82,7 @@ Gil Forsyth & Lorena A. Barba\n\n\n"""
     msg.attach(MIMEText(email_body, 'plain'))
     from_address = 'Gil Forsyth <gilforsyth@gmail.com>'
     to_address = email_addr
+    print(f'Sent email to {sub.subid}: {sub.title}')
+    time.sleep(.5)
 
-    server.sendmail(from_address, to_address, msg.as_string())
+#    server.sendmail(from_address, to_address, msg.as_string())

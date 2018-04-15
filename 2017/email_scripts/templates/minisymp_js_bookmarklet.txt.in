@@ -1,0 +1,46 @@
+Hello chairs,
+
+The review page is now closed and we have received {{ total_reviews }} reviews, {{ review_pct }}% of perfect review completion.
+
+Now it is time to begin selecting the program for SciPy 2018.
+
+We received {{ total_submissions }} submissions this year and we have slots for {{ domain_slots }} talk(s) in the {{ domain }} minisymposium track.
+
+Decisions are due to us end-of-day March 27th
+
+- Note if submission is a poster or a talk
+- You can choose to offer a poster to a worthy submission that doesn’t make the cut
+- Use your judgment, if a review seems rushed or less reliable, you can ignore it at your discretion
+- If you have a conflict of interest for a given submission in your domain, consult with your co-chair and defer to their decision for the submission in question
+- If you and your co-chair have a conflict, please let Gil and Lorena know
+
+If you haven't yet logged in to EasyChair, it's a good time to check it out and begin familiarizing yourself with the interface.
+
+The login page is here: https://easychair.org/account/signin.cgi
+
+If you have any issues logging in that aren't solved with the "Forgotten password" prompts, contact Gil or Jill Cowen.
+
+If you are prompted with a "Choose role" prompt after logging in, the appropriate role is "track chair (SciPy 2018 Talks and Posters)".
+
+After logging in, you can click "Submissions" and then select "View by topic" from the right-hand sidebar to browse submissions in your topic/mini-symposia.
+
+If a talk submission has fewer than 3 reviews, please add or solicit additional reviews to make up the difference.
+To add a review, select the Submission from the "Submissions" page and click the blue `i` info icon, then select "Add Review" from the top-right toolbar.
+
+The most useful view for reading over reviews is available by clicking "Status" in the top menu-bar. (This also provides the easiest eyeball check for how many reviews each submission has received).
+
+Due to the way we configured EasyChair this year (our first outing) all of the submissions are listed and there does not appear to be a way to filter the visible submissions.
+
+That being said, a late night and some light javascript hacking has yielded results and below you will find a bit of bookmarklet code that, if added as bookmark in your browser, will let you toggle between all submissions and only those in your domain.
+
+The easiest way to create the bookmarklet is to bookmark the current page, then edit the bookmark and replace target URL with the bit of javascript below.
+
+Finally, we are still learning our way around EasyChair.  In the interest of not broadcasting decisions early, please do not register any decisions in EasyChair.
+If you have any tips or tricks, please share them on the organizers slack. 
+
+Let us know if you have any questions,
+Gil and Lorena
+
+{{ bookmarklet }}
+
+

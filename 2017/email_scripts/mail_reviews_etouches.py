@@ -19,7 +19,7 @@ from collections import namedtuple
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from ldassn import load_rev_sublist
+from load_save import load_rev_sublist
 
 revlist, sublist, revdict, subdict = load_rev_sublist()
 
