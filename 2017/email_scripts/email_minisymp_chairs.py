@@ -26,7 +26,7 @@ from email.mime.text import MIMEText
 
 from load_save import load_rev_sublist
 from load_chairs import chairs
-from incomplete import populate_domain_pool
+from domain import domain_pool_subs
 from missing_reviews import update_rev_sub_lists
 
 
@@ -41,7 +41,7 @@ server.login(username, password)
 
 revlist, sublist, revdict, subdict = load_rev_sublist()
 revlist, sublist, revdict, subdict = update_rev_sub_lists(revlist, sublist, revdict, subdict)
-domain_pool = populate_domain_pool(revlist, sublist)
+domain_pool = domain_pool_subs(revlist, sublist)
 
 for domain in domain_pool.keys():
     if domain == 'general': # program chairs handle general talks, so no email to ourselves

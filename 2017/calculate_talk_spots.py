@@ -1,12 +1,25 @@
+import yaml
 import pandas as pd
 
-from ldassn import load_rev_sublist
-from incomplete import domain_pool_subs
+from load_save import load_rev_sublist
+from domain import domain_pool_subs
+
+with open('configs/config.yaml') as f:
+    config = yaml.load(f)
 
 revlist, sublist, revdict, subdict = load_rev_sublist()
 
 # need to filter out posters
-df = pd.read_excel('/home/gil/Dropbox/scipy/2018/program_committee/SciPy 2018_data_2018-03-15.xlsx', sheet_name='Submissions')
+df = pd.read_excel(config['easychair']['data_file'], sheet_name='Submissions')
+"""
+Hilariously, there is no column in the export that just says 'Poster' or 'Talk'
+So instead we use the `form fields` column which looks like, e.g.
+
+"'(Poster vs. Talk) Talk\n(Short summary of your topic.) Parallelization of array processing..."
+
+where the entirety of the abstract follows.  So to get the submission type,
+split on newlines, then split on spaces.
+"""
 df['subtype'] = df['form fields'].apply(lambda x: x.split('\n')[0].split(' ')[-1])
 for sub in sublist:
     sub.subtype = df[df['#'] == sub.subid]['subtype'].values[0]

@@ -1,0 +1,11 @@
+submissions:
+  pickle: '/home/gil/Dropbox/scipy/2018/sublist.pickle'
+reviewers:
+  pickle: '/home/gil/Dropbox/scipy/2018/revlist.pickle'
+  signup_csv: 'SciPy 2018 Program Committee Interest Form (Responses).csv'
+easychair:
+  data_file: 'SciPy 2018_data_2018-02-20.xlsx'
+gmail:
+  username: gilforsyth@gmail.com
+  password_file: auth
+

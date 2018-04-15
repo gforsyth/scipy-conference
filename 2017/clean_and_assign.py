@@ -8,25 +8,26 @@ SciPy + EasyChair review assignments
 `sublist` is the list of submission objects with contact info and their reviewers
 """
 
-
+import yaml
 import itertools
+import numpy
 import pandas as pd
 
-from reviewers import get_reviewer_info, get_domain_order, populate_reviewers, get_reviewer_pools
-from submissions import get_submissions, get_submission_pools, populate_submissions
+from reviewers import get_domain_order, populate_reviewers, get_reviewer_pools
+from submissions import get_submission_pools, populate_submissions
 from assign import do_assign
 
 ############################################################
 ### Files
 ############################################################
+with open('configs/config.yaml') as f:
+    config = yaml.load(f)
 
 # Download from EasyChair
 # Premium -> Conference Data Download -> Excel
-easy_chair_data = 'SciPy 2018_data_2018-02-20.xlsx'
+easy_chair_data = config['easychair']['data_file']
 # Download from google form spreadsheet
-reviewer_signup = 'SciPy 2018 Program Committee Interest Form (Responses).csv'
-# Download from EasyChair
-# Assignment -> Download in CSV -> reviewer.csv
+reviewer_signup = config['reviewers']['signup_csv']
 
 
 ############################################################
@@ -52,11 +53,14 @@ for _, _, _, _, _, email, *rest in pc.itertuples():
     if any(pc_csv.Email == email):
         topics.append(pc_csv[pc_csv.Email == email]['domain'].values[0])
     else:
-        topics.append('None')
+        topics.append('none')
 
 pc['domain'] = topics
 # drop chairs and superchairs from df
 pc = pc[pc.role == 'PC member']
+
+# drop reviewers without any specified field
+pc= pc[~(pc.domain == 'none')]
 
 # join first, last names
 pc['name'] = pc['first name'] + ' ' + pc['last name']
@@ -144,7 +148,6 @@ for domain in domain_count.keys()[::-1]:
 
 
 #    assert all([len(sub.reviewers) == 6 for sub in sublist])
-#    assert all([len(rev.to_review) < 10 for rev in rev_list])
 
 ############################################################
 ### Load in _different_ reviewer id numbers because yay relational databases
@@ -155,8 +158,8 @@ names = pd.read_csv('reviewer.csv', names=['id', 'name', 'email', 'role'])
 for rev in rev_list:
     rev.revid = names[names.name == rev.name]['id'].values[0]
 
-revcount = [len(rev.to_review) for rev in rev_list if hasattr(rev, 'to_review')]
-import numpy
+revcount = [len(rev.to_review) for rev in rev_list]
+
 print(numpy.min(revcount))
 print(numpy.max(revcount))
 print(numpy.std(revcount))

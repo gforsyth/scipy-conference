@@ -6,6 +6,7 @@ comfortable reviewing.
 
 import re
 import pandas
+from collections import namedtuple
 
 EMAIL_REGEX = re.compile(r'[\w\.-]+@[\w\.-]+')
 
@@ -15,12 +16,16 @@ class Reviewer(object):
         self.email = email
         self.domains = domains
         self.cois = cois
+        self.to_review = []
+        self.assign_attempts = 0
+        self.not_assigned_reason = dict()
 
     def __repr__(self):
         return f"{self.name}, {self.email}"
 
     def __str_(self):
         return f"{self.name}"
+
 
 def extract_email(text_item):
     """Extract email address(es) from given text item

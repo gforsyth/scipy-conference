@@ -1,6 +1,6 @@
 import pandas as pd
 from bs4 import BeautifulSoup
-from ldassn import load_rev_sublist
+from load_save import load_rev_sublist
 
 from functools import lru_cache
 

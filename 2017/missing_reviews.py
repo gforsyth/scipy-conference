@@ -1,8 +1,11 @@
+import yaml
 import pandas as pd
-from ldassn import load_rev_sublist
+from load_save import load_rev_sublist
 
 def update_rev_sub_lists(revlist, sublist, revdict, subdict):
-    data = pd.read_excel('/home/gil/Dropbox/scipy/2018/program_committee/SciPy 2018_data_2018-03-15.xlsx', sheet_name='Reviews')
+    with open('configs/config.yaml', 'r') as f:
+        config = yaml.load(f)
+    data = pd.read_excel(config['easychair']['data_file'], sheet_name='Reviews')
 
 
     data = data[['submission #', 'member #', 'member name']]
