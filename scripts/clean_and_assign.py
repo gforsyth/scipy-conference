@@ -45,6 +45,8 @@ TRACK_MAP = [
 
 # read in PC from easychair
 pc = pd.read_excel(easy_chair_data, sheet_name="Program committee")
+# rename column
+pc["rev_number"] = pc["#"]
 # read in PC from signup sheet
 # signup csv form has three columns (that we care about)
 # name, email, domain
@@ -78,9 +80,6 @@ pc.dropna(subset=["domain"], inplace=True)
 ############################################################
 ### Submissions
 ############################################################
-
-# columns needed from submissions subsheet
-subs_cols = ["#", "track #", "title"]
 
 # load in submission and topics worksheet
 subs = pd.read_excel(easy_chair_data, sheet_name="Submissions")
@@ -135,7 +134,7 @@ rev_list = populate_reviewers(responses)
 conflicts = pd.read_excel(easy_chair_data, sheet_name="Conflicts of interests")
 for rev in rev_list:
     rev.cois = list(
-        conflicts[conflicts["member name"] == rev.name]["submission #"].values
+        conflicts[conflicts["member #"] == rev.rev_number]["submission #"].values
     )
 
 
