@@ -6,7 +6,7 @@ reviewers:
   easychair_csv: "./data/2019/reviewer.csv"
   submissions: 4
 easychair:
-  data_file: './data/2019/SciPy 2019_data_2019-02-27.xlsx'
+  data_file: './data/2019/SciPy 2019_data_2019-02-28.xlsx'
   assignment_output: "output/reviewer_assignments.csv"
 gmail:
   username: gilforsyth@gmail.com

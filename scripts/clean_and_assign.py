@@ -16,6 +16,7 @@ import pandas as pd
 from reviewers import get_domain_order, populate_reviewers, get_reviewer_pools
 from submissions import get_submission_pools, populate_submissions
 from assign import do_assign
+from load_save import save_rev_sublist
 
 ############################################################
 ### Files
@@ -190,3 +191,9 @@ def write_csv_assigment(revlist):
             if hasattr(rev, "to_review"):
                 for sub in rev.to_review:
                     f.write(f"{rev.revid},{sub.subid}\n")
+
+print("Saving reviewer list and submission list to pickles (sorry world)")
+save_rev_sublist(sublist, rev_list)
+print(f"Saving assignment csv to {config['easychair']['assignment_output']}")
+write_csv_assigment(rev_list)
+print("Finished")
