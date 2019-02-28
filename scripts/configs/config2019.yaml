@@ -1,0 +1,14 @@
+submissions:
+  pickle: './data/2019/sublist.pickle'
+reviewers:
+  pickle: './data/2019/revlist.pickle'
+  signup_csv: './data/2019/SciPy 2019 Program Committee Interest Form (Responses) - cleaned_form_responses.csv'
+  easychair_csv: "./data/2019/reviewer.csv"
+  submissions: 4
+easychair:
+  data_file: './data/2019/SciPy 2019_data_2019-02-27.xlsx'
+  assignment_output: "output/reviewer_assignments.csv"
+gmail:
+  username: gilforsyth@gmail.com
+  password_file: auth
+

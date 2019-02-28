@@ -12,16 +12,16 @@ def assign_paper(reviewer, submission, assign_count):
     reviewer.assign_attempts += 1
 
     if reviewer.email in submission.emails:
-        reviewer.not_assigned_reason[submission.subid] = 'is_submitter'
+        reviewer.not_assigned_reason[submission.subid] = "is_submitter"
         return False
     elif submission in reviewer.to_review:
-        reviewer.not_assigned_reason[submission.subid] = 'already_assigned'
+        reviewer.not_assigned_reason[submission.subid] = "already_assigned"
         return False
     elif submission.subid in reviewer.cois:
-        reviewer.not_assigned_reason[submission.subid] = 'COI'
+        reviewer.not_assigned_reason[submission.subid] = "COI"
         return False
     elif len(reviewer.to_review) > assign_count:
-        reviewer.not_assigned_reason[submission.subid] = 'too_many_assigned'
+        reviewer.not_assigned_reason[submission.subid] = "too_many_assigned"
         return False
     else:
         reviewer.to_review.append(submission)

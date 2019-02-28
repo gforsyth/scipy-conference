@@ -1,6 +1,7 @@
 from load_save import load_rev_sublist, save_rev_sublist
 import pandas
 
+
 def domain_pool_subs(sublist):
 
     domains = set()

@@ -20,98 +20,108 @@ from assign import do_assign
 ############################################################
 ### Files
 ############################################################
-with open('configs/config.yaml') as f:
+with open("configs/config2019.yaml") as f:
     config = yaml.load(f)
 
 # Download from EasyChair
 # Premium -> Conference Data Download -> Excel
-easy_chair_data = config['easychair']['data_file']
+easy_chair_data = config["easychair"]["data_file"]
 # Download from google form spreadsheet
-reviewer_signup = config['reviewers']['signup_csv']
+reviewer_signup = config["reviewers"]["signup_csv"]
 
+REVIEWERS_PER_SUBMISSION = config["reviewers"]["submissions"]
+TRACK_MAP = [
+    ("Neuroscience and Cognitive Science", "neuro"),
+    ("Image Processing", "image"),
+    ("Open Source Communities", "osc"),
+    ("Earth, Ocean, Geo and Atmospheric Science", "earthgeo"),
+    ("Science Communication through Visualization", "viz"),
+    ("Data Driven Discoveries", "dsml"),
+]
 
 ############################################################
 ### Reviewers
 ############################################################
 
 # read in PC from easychair
-pc = pd.read_excel(easy_chair_data, sheet_name='Program committee')
+pc = pd.read_excel(easy_chair_data, sheet_name="Program committee")
 # read in PC from signup sheet
-pc_csv = pd.read_csv(reviewer_signup)
-# rename horrible column
-pc_csv['domain'] = pc_csv['Domain you volunteer to review (check all that apply)']
-# strip whitespace
-pc_csv.Email = pc_csv.Email.str.strip()
-pc_csv.Email = pc_csv.Email.str.lower()
-# Drop reviewers who only checked 'library science' (bummer)
-pc_csv = pc_csv[~(pc_csv.domain == 'Library Science and Digital Humanities')]
+# signup csv form has three columns (that we care about)
+# name, email, domain
+pc_csv = pd.read_csv(reviewer_signup, usecols=["name", "email", "domain"])
 
 
-topics = []
-for _, _, _, _, _, email, *rest in pc.itertuples():
-    email = email.strip().lower()
-    if any(pc_csv.Email == email):
-        topics.append(pc_csv[pc_csv.Email == email]['domain'].values[0])
-    else:
-        topics.append('none')
+# strip and lower everything
+for col in pc_csv.select_dtypes("object"):
+    pc_csv[col] = pc_csv[col].str.strip()
+    pc_csv[col] = pc_csv[col].str.lower()
+for col in pc.select_dtypes("object"):
+    pc[col] = pc[col].str.strip()
+    pc[col] = pc[col].str.lower()
 
-pc['domain'] = topics
+pc = pd.merge(pc, pc_csv, how="left", on="email")
+
 # drop chairs and superchairs from df
-pc = pc[pc.role == 'PC member']
-
+pc = pc[pc.role == "pc member"]
 # drop reviewers without any specified field
-pc= pc[~(pc.domain == 'none')]
+pc = pc[~(pc.domain == "none")]
 
 # join first, last names
-pc['name'] = pc['first name'] + ' ' + pc['last name']
+pc["name"] = pc["first name"] + " " + pc["last name"]
 
 # lower all domain/topics
 pc.domain = pc.domain.str.lower()
 
-# rename earth, geo, ocean because of an annoying comma
-pc.domain = pc.domain.str.replace('earth,', 'earth')
+# remove any reviewers without domain areas
+pc.dropna(subset=["domain"], inplace=True)
 
 ############################################################
 ### Submissions
 ############################################################
 
 # columns needed from submissions subsheet
-subs_cols = ['#', 'track #', 'title']
+subs_cols = ["#", "track #", "title"]
 
 # load in submission and topics worksheet
-subs = pd.read_excel(easy_chair_data, sheet_name='Submissions')
-topics = pd.read_excel(easy_chair_data, sheet_name='Submission topics')
-# temp fix to remove duplicate topics
-topics.drop_duplicates(subset=['submission #'], inplace=True)
+subs = pd.read_excel(easy_chair_data, sheet_name="Submissions")
+topics = pd.read_excel(
+    easy_chair_data,
+    sheet_name="Submission field values",
+    usecols=["field #", "submission #", "value"],
+)
 
-# filter columns
-subs = subs[subs_cols]
+pres_type = topics[topics["field #"] == 1]  # corresponds to talk vs poster
+topics = topics[topics["field #"] == 2]  # corresponds to track name
 
-# filter out tutorials
-subs = subs[subs['track #'] == 1]
+pres_type.drop(columns="field #", inplace=True)
+topics.drop(columns="field #", inplace=True)
+
 
 # set index to submission #
-subs.set_index('#', inplace=True)
-topics.set_index('submission #', inplace=True)
+subs.set_index("#", inplace=True)
+topics.set_index("submission #", inplace=True)
+pres_type.set_index("submission #", inplace=True)
 
 # join topics to subs
-subs = subs.join(topics, lsuffix='subs')
+subs = subs.join(topics, lsuffix="subs")
 
 # strip out plenary session entries
-subs = subs[~subs.topic.str.contains('SciPy Tools')]
+subs = subs[~subs.value.str.contains("SciPy Tools Mini Talk")]
 
-# lower all domain/topics
+# replace and rename all topics with shortcodes
+subs["topic"] = subs.value
+
+for old, new in TRACK_MAP:
+    subs.topic = subs.topic.str.replace(old, new)
+
 subs.topic = subs.topic.str.lower()
-
-# rename earth, geo, ocean because of an annoying comma
-subs.topic = subs.topic.str.replace('earth,', 'earth')
 
 
 ############################################################
 ### Author list
 ############################################################
 
-authors = pd.read_excel('SciPy 2018_data_2018-02-20.xlsx', sheet_name='Authors')
+authors = pd.read_excel(easy_chair_data, sheet_name="Authors")
 
 ############################################################
 ### Load and assign
@@ -122,41 +132,51 @@ domain_count = get_domain_order(responses.domain)
 rev_list = populate_reviewers(responses)
 
 ### Load in CoIs from EasyChair
-conflicts = pd.read_excel(easy_chair_data, sheet_name='Conflicts of interests')
+conflicts = pd.read_excel(easy_chair_data, sheet_name="Conflicts of interests")
 for rev in rev_list:
-    rev.cois = list(conflicts[conflicts['member name'] == rev.name]['submission #'].values)
+    rev.cois = list(
+        conflicts[conflicts["member name"] == rev.name]["submission #"].values
+    )
 
 
 reviewer_pools = get_reviewer_pools(domain_count, rev_list)
 
-sublist = populate_submissions(subs, authors)
+sublist = populate_submissions(subs[["title", "topic"]], authors)
 sub_count = subs.topic.value_counts()
 submission_pools = get_submission_pools(sub_count, sublist)
 
-REVIEWERS_PER_SUBMISSION = 6
-
 # start assigning to areas with fewest number of reviewers first
 for domain in domain_count.keys()[::-1]:
-    submissions = iter(submission_pools.get(domain, '') * REVIEWERS_PER_SUBMISSION)
+    submissions = iter(submission_pools.get(domain, "") * REVIEWERS_PER_SUBMISSION)
     reviewers = reviewer_pools[domain]
     reviewers_cycle = itertools.cycle(reviewers)
 
     for sub in submissions:
         do_assign(reviewers, reviewers_cycle, sub)
 
-    print(f'Assignment of {domain} papers complete')
+    print(f"Assignment of {domain} papers complete")
 
-
-#    assert all([len(sub.reviewers) == 6 for sub in sublist])
 
 ############################################################
 ### Load in _different_ reviewer id numbers because yay relational databases
 ### Need to download `reviewer.csv` from easychair "Assignment -> Download in csv"
 ############################################################
 
-names = pd.read_csv('reviewer.csv', names=['id', 'name', 'email', 'role'])
+names = pd.read_csv(
+    config["reviewers"]["easychair_csv"], names=["id", "name", "email", "role"]
+)
+
+names.name = names.name.str.lower()
+names.name = names.name.str.strip()
+names.email = names.email.str.lower()
+names.email = names.email.str.strip()
+
 for rev in rev_list:
-    rev.revid = names[names.name == rev.name]['id'].values[0]
+    if rev.email in names.email.values:
+        rev.revid = names[names.email == rev.email]["id"].values[0]
+    else:
+        rev_list.remove(rev)
+        print(f"{rev} removed from reviewer list (no match on easychair)")
 
 revcount = [len(rev.to_review) for rev in rev_list]
 
@@ -164,9 +184,10 @@ print(numpy.min(revcount))
 print(numpy.max(revcount))
 print(numpy.std(revcount))
 
+
 def write_csv_assigment(revlist):
-    with open('reviewer_assignments.csv', 'w') as f:
+    with open(config["easychair"]["assignment_output"], "w") as f:
         for rev in revlist:
-            if hasattr(rev, 'to_review'):
+            if hasattr(rev, "to_review"):
                 for sub in rev.to_review:
-                    f.write(f'{rev.revid},{sub.subid}\n')
+                    f.write(f"{rev.revid},{sub.subid}\n")

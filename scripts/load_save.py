@@ -3,43 +3,45 @@ import pickle
 import yaml
 
 import sys
-sys.setrecursionlimit(3000) # the reviewer and submission lists are deeply linked. this lets pickle work
 
-def save_rev_sublist(sublist,
-                     revlist,
-                     subpickle=None,
-                     revpickle=None,
-                     ):
+sys.setrecursionlimit(
+    3000
+)  # the reviewer and submission lists are deeply linked. this lets pickle work
+
+
+def save_rev_sublist(sublist, revlist, subpickle=None, revpickle=None):
     if not subpickle or not revpickle:
-        with open('configs/config.yaml') as f:
+        with open("configs/config2019.yaml") as f:
             conf = yaml.load(f)
 
     if not subpickle:
-        subpickle = conf['submissions']['pickle']
+        subpickle = conf["submissions"]["pickle"]
     if not revpickle:
-        revpickle = conf['reviewers']['pickle']
+        revpickle = conf["reviewers"]["pickle"]
 
-    with open(subpickle, 'wb') as f:
+    with open(subpickle, "wb") as f:
+        print(f"Saving sublist pickle to {subpickle}")
         pickle.dump(sublist, f)
 
-    with open(revpickle, 'wb') as f:
+    with open(revpickle, "wb") as f:
+        print(f"Saving revlist pickle to {revpickle}")
         pickle.dump(revlist, f)
 
 
 def load_rev_sublist(subpickle=None, revpickle=None):
     if not subpickle or not revpickle:
-        with open('configs/config.yaml') as f:
+        with open("configs/config2019.yaml") as f:
             conf = yaml.load(f)
 
     if not subpickle:
-        subpickle = conf['submissions']['pickle']
+        subpickle = conf["submissions"]["pickle"]
     if not revpickle:
-        revpickle = conf['reviewers']['pickle']
+        revpickle = conf["reviewers"]["pickle"]
 
-    with open(subpickle, 'rb') as f:
+    with open(subpickle, "rb") as f:
         sublist = pickle.load(f)
 
-    with open(revpickle, 'rb') as f:
+    with open(revpickle, "rb") as f:
         revlist = pickle.load(f)
 
     # on deserialization the links between the reviewer objects and the sublist
@@ -53,8 +55,13 @@ def load_rev_sublist(subpickle=None, revpickle=None):
         except:
             pass
 
-    revdict = {**{rev.name: rev for rev in revlist}, **{rev.email: rev for rev in revlist}}
-    subdict = {**{sub.title: sub for sub in sublist}, **{sub.subid: sub for sub in sublist}}
+    revdict = {
+        **{rev.name: rev for rev in revlist},
+        **{rev.email: rev for rev in revlist},
+    }
+    subdict = {
+        **{sub.title: sub for sub in sublist},
+        **{sub.subid: sub for sub in sublist},
+    }
 
     return revlist, sublist, revdict, subdict
-
