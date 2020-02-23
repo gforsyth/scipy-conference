@@ -30,7 +30,8 @@ easy_chair_data = config["easychair"]["data_file"]
 # Download from google form spreadsheet
 reviewer_signup = config["reviewers"]["signup_csv"]
 
-REVIEWERS_PER_SUBMISSION = config["reviewers"]["submissions"]
+REVIEWERS_PER_TALK = config["reviewers"]["talk_target_reviews"]
+REVIEWERS_PER_POSTER = config["reviewers"]["poster_target_reviews"]
 TRACK_MAP = [
     ("Machine Learning and Data Science", "dsml"),
     ("General", "general"),
@@ -101,6 +102,7 @@ for old, new in TRACK_MAP:
     subs.track = subs.track.str.replace(old, new)
 
 subs.track = subs.track.str.lower().str.strip()
+subs.type = subs.type.str.lower().str.strip()
 
 
 ############################################################
@@ -127,20 +129,36 @@ for rev in rev_list:
 
 reviewer_pools = get_reviewer_pools(domain_count, rev_list)
 
-sublist = populate_submissions(subs[["title", "track"]], authors)
+sublist = populate_submissions(subs[["title", "track", "type"]], authors)
 sub_count = subs.track.value_counts()
 submission_pools = get_submission_pools(sub_count, sublist)
 
+
 # start assigning to areas with fewest number of reviewers first
 for domain, _ in domain_count.most_common()[::-1]:
-    submissions = iter(submission_pools.get(domain, "") * REVIEWERS_PER_SUBMISSION)
+    allsubs = submission_pools.get(domain)
+    # split up talks and posters (different # of reviewers assigned)
+    talksubs = [sub for sub in allsubs if sub.subtype == "talk"]
+    postersubs = [sub for sub in allsubs if sub.subtype == "poster"]
+    assert len(talksubs) + len(postersubs) == len(allsubs)
+
+    submissions = iter(talksubs * REVIEWERS_PER_TALK)
     reviewers = reviewer_pools[domain]
     reviewers_cycle = itertools.cycle(reviewers)
 
     for sub in submissions:
         do_assign(reviewers, reviewers_cycle, sub)
 
-    print(f"Assignment of {domain} papers complete")
+    print(f"Assignment of {domain} talks complete")
+
+    submissions = iter(postersubs * REVIEWERS_PER_POSTER)
+    reviewers = reviewer_pools[domain]
+    reviewers_cycle = itertools.cycle(reviewers)
+
+    for sub in submissions:
+        do_assign(reviewers, reviewers_cycle, sub)
+
+    print(f"Assignment of {domain} posters complete")
 
 ############################################################
 ### Load in _different_ reviewer id numbers because yay relational databases

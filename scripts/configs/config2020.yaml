@@ -4,7 +4,8 @@ reviewers:
   pickle: '/home/gil/Downloads/scipy2020/revlist.pickle'
   signup_csv: '/home/gil/Downloads/scipy2020/volunteersignup.csv'
   easychair_csv: "/home/gil/Downloads/scipy2020/reviewer.csv"
-  submissions: 6
+  talk_target_reviews: 6
+  poster_target_reviews: 3
 easychair:
   data_file: '/home/gil/Downloads/scipy2020/SciPy 2020_data_2020-02-23.xlsx'
   assignment_output: "/home/gil/Downloads/scipy2020/output/reviewer_assignments.csv"
