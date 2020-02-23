@@ -12,16 +12,17 @@ EMAIL_REGEX = re.compile(r"[\w\.-]+@[\w\.-]+")
 
 
 class Reviewer(object):
-    def __init__(self, name, email, domains, rev_number, cois=[]):
+    def __init__(self, name, email, domains, rev_number, tutorial, cois=[]):
         self.name = name
         self.email = email
         self.domains = domains
+        self.rev_number = rev_number
+        self.tutorial = tutorial
         self.cois = cois
         self.to_review = []
         self.assign_attempts = 0
         self.not_assigned_reason = dict()
         self.revid = None
-        self.rev_number = rev_number
 
     def __repr__(self):
         return f"{self.name}, {self.email}"
@@ -81,7 +82,7 @@ def populate_reviewers(responses):
             domain = ["General"]
         else:
             domain = rev.domain
-        reviewers.append(Reviewer(rev.name, rev.email, domain, rev.rev_number))
+        reviewers.append(Reviewer(rev.name, rev.email, domain, rev.rev_number, rev.tutorial))
 
     return reviewers
 

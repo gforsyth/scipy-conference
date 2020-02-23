@@ -32,6 +32,10 @@ reviewer_signup = config["reviewers"]["signup_csv"]
 
 REVIEWERS_PER_TALK = config["reviewers"]["talk_target_reviews"]
 REVIEWERS_PER_POSTER = config["reviewers"]["poster_target_reviews"]
+# Count of dummy subs to tack on to reviewers who are also reviewing tutorials
+# to offset the double-review load
+TUTORIAL_REVIEWER_PADDING= config["reviewers"]["tutorial_dummy_sub_count"]
+
 TRACK_MAP = [
     ("Machine Learning and Data Science", "dsml"),
     ("General", "general"),
@@ -53,7 +57,10 @@ progcomm["rev_number"] = progcomm["#"]
 # read in PROGCOMM from signup sheet
 # signup csv form has three columns (that we care about)
 # name, email, domain
-progcomm_csv = pd.read_csv(reviewer_signup, usecols=["name", "email", "domain"])
+progcomm_csv = pd.read_csv(reviewer_signup, usecols=["name", "email", "domain", "tutorial"])
+
+# Cast tutorial reviewer column as bool
+progcomm_csv.tutorial = progcomm_csv.tutorial.apply(lambda x: True if x == "Yes" else False)
 
 
 # strip and lower everything
@@ -134,6 +141,13 @@ sub_count = subs.track.value_counts()
 submission_pools = get_submission_pools(sub_count, sublist)
 
 
+# to offset tutorial reviewer work, add in dummy subs to every reviewer who is also reviewing tutorials
+for rev in rev_list:
+    if rev.tutorial:
+        for i in range(TUTORIAL_REVIEWER_PADDING):
+            rev.to_review.append(None)
+
+
 # start assigning to areas with fewest number of reviewers first
 for domain, _ in domain_count.most_common()[::-1]:
     allsubs = submission_pools.get(domain)
@@ -160,6 +174,12 @@ for domain, _ in domain_count.most_common()[::-1]:
 
     print(f"Assignment of {domain} posters complete")
 
+# Now strip out dummy assignments
+
+for rev in rev_list:
+    while None in rev.to_review:
+        rev.to_review.remove(None)
+
 ############################################################
 ### Load in _different_ reviewer id numbers because yay relational databases
 ### Need to download `reviewer.csv` from easychair "Assignment -> Download in csv"
@@ -181,11 +201,17 @@ for rev in rev_list:
         rev_list.remove(rev)
         print(f"{rev} removed from reviewer list (no match on easychair)")
 
-revcount = [len(rev.to_review) for rev in rev_list]
+revcount = [len(rev.to_review) for rev in rev_list if not rev.tutorial]
 
-print(numpy.min(revcount))
-print(numpy.max(revcount))
-print(numpy.std(revcount))
+print(f"Smallest assign count for non-tut reviewers: {numpy.min(revcount)}")
+print(f"Largest assign count for non-tut reviewers: {numpy.max(revcount)}")
+print(f"Mean assign count for non-tut reviewers: {numpy.mean(revcount)}")
+
+revcount = [len(rev.to_review) for rev in rev_list if rev.tutorial]
+
+print(f"Smallest assign count for tut reviewers: {numpy.min(revcount)}")
+print(f"Largest assign count for tut reviewers: {numpy.max(revcount)}")
+print(f"Mean assign count for tut reviewers: {numpy.mean(revcount)}")
 
 
 def write_csv_assigment(revlist):

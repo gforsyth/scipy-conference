@@ -6,6 +6,7 @@ reviewers:
   easychair_csv: "/home/gil/Downloads/scipy2020/reviewer.csv"
   talk_target_reviews: 6
   poster_target_reviews: 3
+  tutorial_dummy_sub_count: 3
 easychair:
   data_file: '/home/gil/Downloads/scipy2020/SciPy 2020_data_2020-02-23.xlsx'
   assignment_output: "/home/gil/Downloads/scipy2020/output/reviewer_assignments.csv"
