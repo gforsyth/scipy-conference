@@ -21,7 +21,7 @@ from load_save import save_rev_sublist
 ############################################################
 ### Files
 ############################################################
-with open("configs/config2019.yaml") as f:
+with open("configs/config2020.yaml") as f:
     config = yaml.load(f)
 
 # Download from EasyChair
@@ -32,12 +32,13 @@ reviewer_signup = config["reviewers"]["signup_csv"]
 
 REVIEWERS_PER_SUBMISSION = config["reviewers"]["submissions"]
 TRACK_MAP = [
-    ("Neuroscience and Cognitive Science", "neuro"),
-    ("Image Processing", "image"),
-    ("Open Source Communities", "osc"),
+    ("Machine Learning and Data Science", "dsml"),
+    ("General", "general"),
+    ("High Performance Python", "hpp"),
     ("Earth, Ocean, Geo and Atmospheric Science", "earthgeo"),
-    ("Science Communication through Visualization", "viz"),
-    ("Data Driven Discoveries", "dsml"),
+    ("Biology and Bioinformatics", "bio"),
+    ("Astronomy and Astrophysics", "astro"),
+    ("Materials Science", "matsci"),
 ]
 
 ############################################################
@@ -45,38 +46,36 @@ TRACK_MAP = [
 ############################################################
 
 # read in PC from easychair
-pc = pd.read_excel(easy_chair_data, sheet_name="Program committee")
+progcomm = pd.read_excel(easy_chair_data, sheet_name="Program committee")
 # rename column
-pc["rev_number"] = pc["#"]
-# read in PC from signup sheet
+progcomm["rev_number"] = progcomm["#"]
+# read in PROGCOMM from signup sheet
 # signup csv form has three columns (that we care about)
 # name, email, domain
-pc_csv = pd.read_csv(reviewer_signup, usecols=["name", "email", "domain"])
+progcomm_csv = pd.read_csv(reviewer_signup, usecols=["name", "email", "domain"])
 
 
 # strip and lower everything
-for col in pc_csv.select_dtypes("object"):
-    pc_csv[col] = pc_csv[col].str.strip()
-    pc_csv[col] = pc_csv[col].str.lower()
-for col in pc.select_dtypes("object"):
-    pc[col] = pc[col].str.strip()
-    pc[col] = pc[col].str.lower()
+for col in progcomm_csv.select_dtypes("object"):
+    progcomm_csv[col] = progcomm_csv[col].str.strip().str.lower()
 
-pc = pd.merge(pc, pc_csv, how="left", on="email")
+for col in progcomm.select_dtypes("object"):
+    progcomm[col] = progcomm[col].str.strip().str.lower()
+
+progcomm = pd.merge(progcomm, progcomm_csv, how="left", on="email")
 
 # drop chairs and superchairs from df
-pc = pc[pc.role == "pc member"]
-# drop reviewers without any specified field
-pc = pc[~(pc.domain == "none")]
+progcomm = progcomm[progcomm.role == "pc member"]
 
 # join first, last names
-pc["name"] = pc["first name"] + " " + pc["last name"]
+progcomm["name"] = progcomm["first name"] + " " + progcomm["last name"]
 
 # lower all domain/topics
-pc.domain = pc.domain.str.lower()
+progcomm.domain = progcomm.domain.str.lower().str.strip()
 
 # remove any reviewers without domain areas
-pc.dropna(subset=["domain"], inplace=True)
+# TODO: put them in general instead of dropping out right
+progcomm.dropna(subset=["domain"], inplace=True)
 
 ############################################################
 ### Submissions
@@ -84,37 +83,24 @@ pc.dropna(subset=["domain"], inplace=True)
 
 # load in submission and topics worksheet
 subs = pd.read_excel(easy_chair_data, sheet_name="Submissions")
-topics = pd.read_excel(
-    easy_chair_data,
-    sheet_name="Submission field values",
-    usecols=["field #", "submission #", "value"],
-)
-
-pres_type = topics[topics["field #"] == 1]  # corresponds to talk vs poster
-topics = topics[topics["field #"] == 2]  # corresponds to track name
-
-pres_type.drop(columns="field #", inplace=True)
-topics.drop(columns="field #", inplace=True)
-
 
 # set index to submission #
 subs.set_index("#", inplace=True)
-topics.set_index("submission #", inplace=True)
-pres_type.set_index("submission #", inplace=True)
 
-# join topics to subs
-subs = subs.join(topics, lsuffix="subs")
+# extract track and presentation type from "form fields"
+subs["track"] = subs["form fields"].str.extract("\(Track\)(.*)\n")
+subs["type"] = subs["form fields"].str.extract("\(Talk or Poster\)(.*)\n")
 
 # strip out plenary session entries
-subs = subs[~subs.value.str.contains("SciPy Tools Mini Talk")]
+subs = subs[~subs.track.str.contains("SciPy Tools")]
+# strip out maintainers track
+subs = subs[~subs.track.str.contains("Maintainers Track")]
 
 # replace and rename all topics with shortcodes
-subs["topic"] = subs.value
-
 for old, new in TRACK_MAP:
-    subs.topic = subs.topic.str.replace(old, new)
+    subs.track = subs.track.str.replace(old, new)
 
-subs.topic = subs.topic.str.lower()
+subs.track = subs.track.str.lower().str.strip()
 
 
 ############################################################
@@ -124,12 +110,12 @@ subs.topic = subs.topic.str.lower()
 authors = pd.read_excel(easy_chair_data, sheet_name="Authors")
 
 ############################################################
-### Load and assign
+### Load and  maintainers trackassign
 ############################################################
 
-responses = pc
-domain_count = get_domain_order(responses.domain)
-rev_list = populate_reviewers(responses)
+#progcomm.domain = progcomm.domain.str.split("|")
+domain_count = get_domain_order(progcomm.domain)
+rev_list = populate_reviewers(progcomm)
 
 ### Load in CoIs from EasyChair
 conflicts = pd.read_excel(easy_chair_data, sheet_name="Conflicts of interests")
@@ -141,12 +127,12 @@ for rev in rev_list:
 
 reviewer_pools = get_reviewer_pools(domain_count, rev_list)
 
-sublist = populate_submissions(subs[["title", "topic"]], authors)
-sub_count = subs.topic.value_counts()
+sublist = populate_submissions(subs[["title", "track"]], authors)
+sub_count = subs.track.value_counts()
 submission_pools = get_submission_pools(sub_count, sublist)
 
 # start assigning to areas with fewest number of reviewers first
-for domain in domain_count.keys()[::-1]:
+for domain, _ in domain_count.most_common()[::-1]:
     submissions = iter(submission_pools.get(domain, "") * REVIEWERS_PER_SUBMISSION)
     reviewers = reviewer_pools[domain]
     reviewers_cycle = itertools.cycle(reviewers)
@@ -155,7 +141,6 @@ for domain in domain_count.keys()[::-1]:
         do_assign(reviewers, reviewers_cycle, sub)
 
     print(f"Assignment of {domain} papers complete")
-
 
 ############################################################
 ### Load in _different_ reviewer id numbers because yay relational databases

@@ -6,7 +6,7 @@ comfortable reviewing.
 
 import re
 import pandas
-from collections import namedtuple
+from collections import namedtuple, Counter
 
 EMAIL_REGEX = re.compile(r"[\w\.-]+@[\w\.-]+")
 
@@ -56,13 +56,16 @@ def get_reviewer_info(csvfile=None, columns=None, rename_dict=None, dup_drop=Non
 
 
 def get_domain_order(domains):
-    """Return list of all domains of all reviewers"""
+    """Return list of all domains of all reviewers
+
+    domains : pandas.Series
+      comma delimited string of domains reviewers selected
+    """
     count = []
     for domain in domains:
-        for i in domain.split(", "):
+        for i in domain.split("|"):
             count.append(i)
-    count = pandas.Series(count).value_counts()
-    return count
+    return Counter(count)
 
 
 def populate_reviewers(responses):

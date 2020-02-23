@@ -11,7 +11,7 @@ sys.setrecursionlimit(
 
 def save_rev_sublist(sublist, revlist, subpickle=None, revpickle=None):
     if not subpickle or not revpickle:
-        with open("configs/config2019.yaml") as f:
+        with open("configs/config2020.yaml") as f:
             conf = yaml.load(f)
 
     if not subpickle:
@@ -30,7 +30,7 @@ def save_rev_sublist(sublist, revlist, subpickle=None, revpickle=None):
 
 def load_rev_sublist(subpickle=None, revpickle=None):
     if not subpickle or not revpickle:
-        with open("configs/config2019.yaml") as f:
+        with open("configs/config2020.yaml") as f:
             conf = yaml.load(f)
 
     if not subpickle:
