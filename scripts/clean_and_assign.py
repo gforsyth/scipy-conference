@@ -137,8 +137,7 @@ for rev in rev_list:
 reviewer_pools = get_reviewer_pools(domain_count, rev_list)
 
 sublist = populate_submissions(subs[["title", "track", "type"]], authors)
-sub_count = subs.track.value_counts()
-submission_pools = get_submission_pools(sub_count, sublist)
+submission_pools = get_submission_pools(sublist)
 
 
 # to offset tutorial reviewer work, add in dummy subs to every reviewer who is also reviewing tutorials

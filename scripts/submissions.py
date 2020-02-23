@@ -1,4 +1,6 @@
 import re
+from collections import defaultdict
+
 import pandas
 
 APP_REGEX = re.compile(r"Applicant \d: (\w*)")
@@ -22,25 +24,12 @@ class Submission(object):
         return f"{self.title}"
 
 
-def get_submissions(csvfile=None, columns=None):
-    """Read in the columns from the etouches csv with the info needed
-    Likely: Name, email, title, domain
-    """
-    subs = pandas.read_csv(csvfile, usecols=columns)
-    count = subs["Submission-Initial Stage-Submission Subgroup"].value_counts()
-
-    return subs, count
-
-
-def get_submission_pools(count, sublist):
+def get_submission_pools(sublist):
     """Generate pools of submissions for each topic
-
     """
-    submission_pools = {}
-    for category in count.keys():
-        submission_pools[category] = [
-            resub for resub in sublist if resub.domain == category
-        ]
+    submission_pools = defaultdict(list)
+    for sub in sublist:
+        submission_pools[sub.domain].append(sub)
 
     return submission_pools
 
